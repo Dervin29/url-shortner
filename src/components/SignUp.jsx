@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Error from "./Error";
 import { Input } from "./ui/input";
 import * as Yup from "yup";
@@ -14,7 +14,18 @@ import { Button } from "./ui/button";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { signup } from "@/db/apiAuth";
 import { BeatLoader } from "react-spinners";
+import { AlertCircle, Eye, EyeOff, User } from "lucide-react";
 import useFetch from "@/hooks/useFetch";
+import { UrlState } from "@/context/context";
+
+const schema = Yup.object({
+  name: Yup.string().required("Name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  profile_pic: Yup.mixed().required("Profile picture is required"),
+});
 
 const Signup = () => {
   let [searchParams] = useSearchParams();
@@ -22,7 +33,13 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
+  const { fetchUser } = UrlState();
+
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [redirectToDashboard, setRedirectToDashboard] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,54 +47,89 @@ const Signup = () => {
     profile_pic: null,
   });
 
+  const nameRef = useRef(null);
+
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (redirectToDashboard) {
+      navigate(`/dashboard${longLink ? `?createNew=${longLink}` : ""}`);
+    }
+  }, [redirectToDashboard, navigate, longLink]);
+
+  const { loading, error, fn: fnSignup, data } = useFetch(signup, formData);
+
+  useEffect(() => {
+    const handleSuccess = async () => {
+      if (!loading && !error && data) {
+        await fetchUser();
+        setRedirectToDashboard(true);
+      }
+    };
+
+    handleSuccess();
+  }, [loading, error, data, fetchUser]);
+
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prevState) => ({
       ...prevState,
       [name]: files ? files[0] : value,
     }));
+
+    if (name === "profile_pic" && files?.[0]) {
+      setPreviewUrl(URL.createObjectURL(files[0]));
+    }
   };
 
-  const { loading, error, fn: fnSignup, data } = useFetch(signup, formData);
+  const handleBlur = async (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
 
-  useEffect(() => {
-    if (!loading && !error && data) {
-      navigate(`/dashboard${longLink ? `?createNew=${longLink}` : ""}`);
-    }
-  }, [loading, error, data, longLink, navigate]);
-
-  const handleSignup = async () => {
-    setErrors({});
-
-    const schema = Yup.object({
-      name: Yup.string().required("Name is required"),
-      email: Yup.string().email("Invalid email").required("Email is required"),
-      password: Yup.string()
-        .min(6, "Password must be at least 6 characters")
-        .required("Password is required"),
-      profile_pic: Yup.mixed().required("Profile picture is required"),
-    });
+    if (name === "profile_pic") return;
 
     try {
-      await schema.validate(formData, { abortEarly: false });
-
-      await fnSignup();
+      await schema.validateAt(name, formData);
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const validationErrors = {};
-
-        err.inner.forEach((error) => {
-          validationErrors[error.path] = error.message;
-        });
-
-        setErrors(validationErrors);
-      } else {
-        setErrors({
-          api: err.message || "Something went wrong",
-        });
-      }
+      setErrors((prev) => ({ ...prev, [name]: err.message }));
     }
   };
+
+  const validate = async () => {
+    try {
+      await schema.validate(formData, { abortEarly: false });
+      return null;
+    } catch (err) {
+      const validationErrors = {};
+      err.inner.forEach((error) => {
+        validationErrors[error.path] = error.message;
+      });
+      return validationErrors;
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    setTouched({ name: true, email: true, password: true, profile_pic: true });
+
+    const validationErrors = await validate();
+    if (validationErrors) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    await fnSignup();
+  };
+
+  const showError = (field) => touched[field] && errors[field];
 
   return (
     <div className="flex items-center justify-center px-4 py-10">
@@ -89,76 +141,136 @@ const Signup = () => {
             Sign up to start shortening and managing your links.
           </CardDescription>
 
-          {errors.api && <Error message={errors.api} />}
-          {error && <Error message={error.message} />}
+          {errors.api && (
+            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{errors.api}</span>
+            </div>
+          )}
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{error.message}</span>
+            </div>
+          )}
         </CardHeader>
 
-        <CardContent className="space-y-5">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Full Name</label>
+        <form onSubmit={handleSignup}>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Full Name</label>
 
-            <Input
-              name="name"
-              placeholder="John Doe"
-              value={formData.name}
-              onChange={handleInputChange}
-            />
+              <Input
+                ref={nameRef}
+                name="name"
+                placeholder="John Doe"
+                value={formData.name}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                aria-invalid={showError("name") || undefined}
+              />
 
-            {errors.name && <Error message={errors.name} />}
-          </div>
+              {showError("name") && <Error message={errors.name} />}
+            </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
 
-            <Input
-              type="email"
-              name="email"
-              placeholder="john@example.com"
-              value={formData.email}
-              onChange={handleInputChange}
-            />
+              <Input
+                type="email"
+                name="email"
+                placeholder="john@example.com"
+                value={formData.email}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                aria-invalid={showError("email") || undefined}
+              />
 
-            {errors.email && <Error message={errors.email} />}
-          </div>
+              {showError("email") && <Error message={errors.email} />}
+            </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Password</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Password</label>
 
-            <Input
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleInputChange}
-            />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  aria-invalid={showError("password") || undefined}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
+                  disabled={loading}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
 
-            {errors.password && <Error message={errors.password} />}
-          </div>
+              {showError("password") && <Error message={errors.password} />}
+            </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Profile Picture</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Profile Picture</label>
 
-            <Input
-              type="file"
-              accept="image/*"
-              name="profile_pic"
-              onChange={handleInputChange}
-              className="cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:opacity-90"
-            />
+              <div className="flex items-center gap-4">
+                <div className="shrink-0 size-14 rounded-full overflow-hidden border-2 border-muted bg-muted flex items-center justify-center">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    <User size={20} className="text-muted-foreground" />
+                  )}
+                </div>
 
-            {errors.profile_pic && <Error message={errors.profile_pic} />}
-          </div>
-        </CardContent>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  name="profile_pic"
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  disabled={loading}
+                  className="flex-1 cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:opacity-90"
+                  aria-invalid={showError("profile_pic") || undefined}
+                />
+              </div>
 
-        <CardFooter>
-          <Button
-            className="w-full h-11 text-base"
-            onClick={handleSignup}
-            disabled={loading}
-          >
-            {loading ? <BeatLoader size={8} color="white" /> : "Create Account"}
-          </Button>
-        </CardFooter>
+              {showError("profile_pic") && <Error message={errors.profile_pic} />}
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex flex-col gap-4">
+            <Button
+              className="w-full h-11 text-base"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? <BeatLoader size={8} color="white" /> : "Create Account"}
+            </Button>
+
+            <p className="text-sm text-center text-muted-foreground">
+              Already have an account?{" "}
+              <span
+                className="cursor-pointer text-primary font-medium hover:underline"
+                onClick={() => navigate("/auth?tab=login")}
+              >
+                Sign in
+              </span>
+            </p>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

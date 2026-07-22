@@ -7,7 +7,7 @@ import { deleteUrl } from "@/db/apiUrls";
 const LinkCards = ({ url, fetchUrls }) => {
   const downloadImage = () => {
     const imageUrl = url?.qr;
-    const fileName = fileName;
+    const fileName = url?.title;
 
     const anchor = document.createElement("a");
     anchor.href = imageUrl;
@@ -22,26 +22,26 @@ const LinkCards = ({ url, fetchUrls }) => {
 
   const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, url?.id);
   return (
-    <div className="group flex flex-col md:flex-row items-center gap-6 rounded-xl border border-zinc-800 bg-zinc-900/80 p-5 transition-all hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10">
+    <div className="group flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 rounded-xl border border-zinc-800 bg-zinc-900/80 p-4 sm:p-5 transition-all hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/10">
       {/* QR */}
-      <div className="flex shrink-0 justify-center">
+      <div className="flex shrink-0 justify-center w-full sm:w-auto">
         <img
           src={url?.qr}
           alt="QR Code"
-          className="h-28 w-28 rounded-lg border bg-white p-2 shadow"
+          className="h-24 w-24 sm:h-28 sm:w-28 rounded-lg border bg-white p-2 shadow"
         />
       </div>
 
       {/* Content */}
       <Link
         to={`/link/${url?.id}`}
-        className="flex flex-1 flex-col space-y-2 overflow-hidden"
+        className="flex flex-1 flex-col space-y-1.5 sm:space-y-2 overflow-hidden w-full sm:w-auto"
       >
-        <h2 className="truncate text-2xl font-bold transition-colors group-hover:text-blue-400">
+        <h2 className="truncate text-xl sm:text-2xl font-bold transition-colors group-hover:text-blue-400">
           {url?.title}
         </h2>
 
-        <p className="truncate text-lg font-medium text-blue-500">
+        <p className="truncate text-base sm:text-lg font-medium text-blue-500">
           {import.meta.env.VITE_APP_URL}/{url?.custom_url || url?.short_url}
         </p>
 
@@ -53,7 +53,7 @@ const LinkCards = ({ url, fetchUrls }) => {
       </Link>
 
       {/* Actions */}
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2 self-end sm:self-center w-full sm:w-auto justify-end sm:justify-start border-t sm:border-t-0 border-zinc-800 pt-3 sm:pt-0 mt-2 sm:mt-0">
         <Button
           size="icon"
           variant="outline"

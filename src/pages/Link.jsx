@@ -66,95 +66,118 @@ const LinkPage = () => {
   }
 
   return (
-    <div className="py-10 px-4">
+    <div className="container mx-auto px-4 py-8">
       {(loading || loadingStats) && (
-        <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />
+        <BarLoader className="mb-6" width="100%" color="#36d7b7" />
       )}
-      <div className="flex flex-col gap-8 sm:flex-row justify-between">
-        <div className="flex flex-col items-start gap-8 rounded-lg sm:w-2/5">
-          <span className="text-6xl font-extrabold hover:underline cursor-pointer">
-            {url?.title}
-          </span>
-          <a
-            href={`${import.meta.env.VITE_APP_URL}/${link}`}
-            target="_blank"
-            className="text-3xl sm:text-4xl text-blue-400 font-bold hover:underline cursor-pointer"
-          >
-            {import.meta.env.VITE_APP_URL}/{link}
-          </a>
-          <a
-            href={url?.original_url}
-            target="_blank"
-            className="flex items-center gap-1 hover:underline cursor-pointer"
-          >
-            <LinkIcon className="p-1" />
-            {url?.original_url}
-          </a>
-          <span className="flex items-end font-extralight text-sm">
-            {new Date(url?.created_at).toLocaleString()}
-          </span>
-          <div className="flex gap-2">
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+        {/* Left Section */}
+        <div className=" h-full lg:col-span-2 flex flex-col gap-6">
+          <div>
+            <h1 className="break-words text-3xl font-extrabold sm:text-4xl md:text-5xl">
+              {url?.title}
+            </h1>
+
+            <a
+              href={`${import.meta.env.VITE_APP_URL}/${link}`}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 block break-all text-lg font-semibold text-blue-500 hover:underline sm:text-2xl"
+            >
+              {import.meta.env.VITE_APP_URL}/{link}
+            </a>
+
+            <a
+              href={url?.original_url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 flex items-start gap-2 break-all text-sm text-muted-foreground hover:underline sm:text-base"
+            >
+              <LinkIcon className="mt-0.5 h-5 w-5 shrink-0" />
+              <span>{url?.original_url}</span>
+            </a>
+
+            <p className="mt-3 text-xs text-muted-foreground sm:text-sm">
+              Created {new Date(url?.created_at).toLocaleString()}
+            </p>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-wrap gap-3">
             <Button
-              variant="ghost"
+              size="icon"
+              variant="outline"
               onClick={() =>
                 navigator.clipboard.writeText(
                   `${import.meta.env.VITE_APP_URL}/${link}`,
                 )
               }
             >
-              <Copy />
+              <Copy className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" onClick={downloadImage}>
-              <Download />
+
+            <Button size="icon" variant="outline" onClick={downloadImage}>
+              <Download className="h-5 w-5" />
             </Button>
+
             <Button
-              variant="ghost"
-              onClick={() =>
-                fnDelete().then(() => {
-                  navigate("/dashboard");
-                })
-              }
-              disable={loadingDelete}
+              size="icon"
+              variant="destructive"
+              disabled={loadingDelete}
+              onClick={() => fnDelete().then(() => navigate("/dashboard"))}
             >
               {loadingDelete ? (
-                <BeatLoader size={5} color="white" />
+                <BeatLoader size={6} color="white" />
               ) : (
-                <Trash />
+                <Trash className="h-5 w-5" />
               )}
             </Button>
           </div>
-          <img
-            src={url?.qr}
-            className="w-full self-center sm:self-start ring ring-blue-500 p-1 object-contain"
-            alt="qr code"
-          />
+
+          {/* QR */}
+          <div className="flex justify-center lg:justify-start">
+            <img
+              src={url?.qr}
+              alt="QR Code"
+              className="w-52 rounded-lg border bg-white p-3 shadow md:w-64"
+            />
+          </div>
         </div>
 
-        <Card className="sm:w-3/5">
+        {/* Stats */}
+        <Card className="lg:col-span-3 h-fit">
           <CardHeader>
-            <CardTitle className="text-4xl font-extrabold">Stats</CardTitle>
+            <CardTitle className="text-2xl font-bold sm:text-3xl">
+              Statistics
+            </CardTitle>
           </CardHeader>
-          {stats && stats.length ? (
-            <CardContent className="flex flex-col gap-6">
+
+          {stats?.length ? (
+            <CardContent className="space-y-8">
               <Card>
                 <CardHeader>
                   <CardTitle>Total Clicks</CardTitle>
                 </CardHeader>
+
                 <CardContent>
-                  <p>{stats?.length}</p>
+                  <p className="text-4xl font-bold">{stats.length}</p>
                 </CardContent>
               </Card>
 
-              <CardTitle>Location Data</CardTitle>
-              <Location stats={stats} />
-              <CardTitle>Device Info</CardTitle>
-              <DeviceStats stats={stats} />
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">Location Analytics</h3>
+                <Location stats={stats} />
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">Device Analytics</h3>
+                <DeviceStats stats={stats} />
+              </div>
             </CardContent>
           ) : (
-            <CardContent>
-              {loadingStats === false
-                ? "No Statistics yet"
-                : "Loading Statistics.."}
+            <CardContent className="py-10 text-center text-muted-foreground">
+              {loadingStats ? "Loading statistics..." : "No statistics yet"}
             </CardContent>
           )}
         </Card>

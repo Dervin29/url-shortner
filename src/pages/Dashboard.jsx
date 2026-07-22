@@ -24,7 +24,7 @@ const Dashboard = () => {
     loading: loadingClicks,
     data: clicks,
     fn: fnClicks,
-  } = useFetch(getClicksForUrls);
+  } = useFetch((_, urlIds) => getClicksForUrls(urlIds));
 
   useEffect(() => {
     fnUrls();

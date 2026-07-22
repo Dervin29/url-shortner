@@ -1,5 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { UrlState } from "@/context/context";
 import { getClicksForUrl } from "@/db/apiClicks";
 import { deleteUrl, getUrl } from "@/db/apiUrls";
@@ -122,18 +132,48 @@ const LinkPage = () => {
               <Download className="h-5 w-5" />
             </Button>
 
-            <Button
-              size="icon"
-              variant="destructive"
-              disabled={loadingDelete}
-              onClick={() => fnDelete().then(() => navigate("/dashboard"))}
-            >
-              {loadingDelete ? (
-                <BeatLoader size={6} color="white" />
-              ) : (
-                <Trash className="h-5 w-5" />
-              )}
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  disabled={loadingDelete}
+                >
+                  {loadingDelete ? (
+                    <BeatLoader size={6} color="white" />
+                  ) : (
+                    <Trash className="h-5 w-5" />
+                  )}
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete Link</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this link? This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose
+                    render={<Button variant="outline">Cancel</Button>}
+                  />
+                  <Button
+                    variant="destructive"
+                    onClick={() =>
+                      fnDelete().then(() => navigate("/dashboard"))
+                    }
+                    disabled={loadingDelete}
+                  >
+                    {loadingDelete ? (
+                      <BeatLoader size={6} color="white" />
+                    ) : (
+                      "Delete"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* QR */}

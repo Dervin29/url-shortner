@@ -1,9 +1,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "./ui/dialog";
 import { Copy, Delete, Download } from "lucide-react";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { deleteUrl } from "@/db/apiUrls";
+import { BeatLoader } from "react-spinners";
 
 const LinkCards = ({ url, fetchUrls }) => {
   const downloadImage = () => {
@@ -72,16 +83,39 @@ const LinkCards = ({ url, fetchUrls }) => {
           <Download className="h-4 w-4" />
         </Button>
 
-        <Button
-          size="icon"
-          variant="destructive"
-          onClick={() => {
-            toast.success("Link deleted");
-            fnDelete().then(fetchUrls);
-          }}
-        >
-          <Delete className={loadingDelete ? "animate-spin" : ""} />
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="icon" variant="destructive">
+              <Delete className={loadingDelete ? "animate-spin" : ""} />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Link</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this link? This action cannot be
+                undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose render={<Button variant="outline">Cancel</Button>} />
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  toast.success("Link deleted");
+                  fnDelete().then(fetchUrls);
+                }}
+                disabled={loadingDelete}
+              >
+                {loadingDelete ? (
+                  <BeatLoader size={6} color="white" />
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

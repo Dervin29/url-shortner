@@ -72,7 +72,7 @@ const Signup = () => {
     };
 
     handleSuccess();
-  }, [loading, error, data, fetchUser]);
+  }, [loading, error, data]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;

@@ -71,7 +71,7 @@ const Login = () => {
     };
 
     handleSuccess();
-  }, [loading, error, data, fetchUser]);
+  }, [loading, error, data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

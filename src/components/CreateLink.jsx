@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Card } from "./ui/card";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import Error from "./error";
 import * as yup from "yup";
 import { BeatLoader } from "react-spinners";
 import { QRCode } from "react-qrcode-logo";
@@ -18,6 +17,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { createUrl } from "@/db/apiUrls";
+import Error from "./Error";
 
 export function CreateLink() {
   const { user } = UrlState();

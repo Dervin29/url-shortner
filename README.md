@@ -1,16 +1,193 @@
-# React + Vite
+# URL Shortener
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern URL shortening application built with React, Vite, Supabase, and ShadCN UI. The application allows users to create, manage, and track shortened URLs with analytics, QR code generation, and authentication.
 
-Currently, two official plugins are available:
+**Live Demo:** https://url-shortner-pearl-psi.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- User authentication
+- Create shortened URLs
+- Custom short aliases
+- QR code generation
+- Click analytics
+- Device statistics
+- Location tracking
+- Copy shortened links
+- Download QR codes
+- Delete shortened URLs
+- Responsive design
+- Form validation with Yup
+- Modern UI built with ShadCN UI
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- React Router
+- Tailwind CSS
+- ShadCN UI
+- Lucide React
+- React Spinners
+- Yup
+
+### Backend & Database
+
+- Supabase
+  - Authentication
+  - PostgreSQL Database
+  - Storage
+
+---
+
+## Screenshots
+
+> Add screenshots of the application here.
+
+- Landing Page
+- Authentication
+- Dashboard
+- URL Details
+- Analytics
+
+---
+
+## Installation
+
+### Clone the repository
+
+```bash
+git clone https://github.com/your-username/url-shortner.git
+```
+
+```bash
+cd url-shortner
+```
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Configure environment variables
+
+Create a `.env` file.
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_APP_URL=http://localhost:5173
+```
+
+### Run the development server
+
+```bash
+npm run dev
+```
+
+---
+
+## Build for Production
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+---
+
+## Project Structure
+
+```
+src/
+│
+├── components/
+├── context/
+├── db/
+├── hooks/
+├── layouts/
+├── lib/
+├── pages/
+├── utils/
+└── main.jsx
+```
+
+---
+
+## Application Flow
+
+1. User signs up or logs in.
+2. User creates a shortened URL.
+3. A unique short link and QR code are generated.
+4. Visitors access the shortened URL.
+5. Clicks are recorded.
+6. Users can view analytics, including:
+   - Total clicks
+   - Device information
+   - Geographic location
+
+---
+
+## Key Features
+
+### URL Management
+
+- Create shortened URLs
+- Custom short aliases
+- Delete URLs
+- Copy links instantly
+
+### Analytics
+
+- Total click count
+- Device statistics
+- Geographic insights
+- Click history
+
+### QR Code
+
+- Automatic QR code generation
+- Download QR code as an image
+
+### Authentication
+
+- Secure login
+- User registration
+- Protected dashboard
+
+---
+
+## Deployment
+
+The application is deployed on Vercel.
+
+Live URL:
+
+https://url-shortner-pearl-psi.vercel.app
+
+---
+
+## Future Improvements
+
+- Custom domains
+- Password-protected links
+- Link expiration
+- Bulk URL shortening
+- Advanced analytics dashboard
+- API for developers
+- Dark mode
+- Team workspaces
+
+---

@@ -8,14 +8,18 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab") || "login";
   return (
-    <div className="mt-24 sm:mt-36 flex flex-col items-center gap-8 sm:gap-10 px-4">
+    <div className=" flex flex-col items-center justify-center gap-8 sm:gap-10 px-4">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center">
         {searchParams.get("createNew")
           ? "Hold up! Let's Login first"
           : "Login / Sign Up"}
       </h1>
 
-      <Tabs value={tab} onValueChange={(v) => navigate(`/auth?tab=${v}`, { replace: true })} className="w-full max-w-md">
+      <Tabs
+        value={tab}
+        onValueChange={(v) => navigate(`/auth?tab=${v}`, { replace: true })}
+        className="w-full max-w-md"
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>

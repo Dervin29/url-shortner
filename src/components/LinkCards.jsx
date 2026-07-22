@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Copy, Delete, Download } from "lucide-react";
+import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { deleteUrl } from "@/db/apiUrls";
 
@@ -57,11 +58,12 @@ const LinkCards = ({ url, fetchUrls }) => {
         <Button
           size="icon"
           variant="outline"
-          onClick={() =>
+          onClick={() => {
             navigator.clipboard.writeText(
               `${import.meta.env.VITE_APP_URL}/${url?.short_url}`,
-            )
-          }
+            );
+            toast.success("Copied to clipboard");
+          }}
         >
           <Copy className="h-4 w-4" />
         </Button>
@@ -73,7 +75,10 @@ const LinkCards = ({ url, fetchUrls }) => {
         <Button
           size="icon"
           variant="destructive"
-          onClick={() => fnDelete().then(fetchUrls)}
+          onClick={() => {
+            toast.success("Link deleted");
+            fnDelete().then(fetchUrls);
+          }}
         >
           <Delete className={loadingDelete ? "animate-spin" : ""} />
         </Button>

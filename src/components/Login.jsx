@@ -18,6 +18,7 @@ import { Button } from "./ui/button";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import Error from "./Error";
 
+import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { login } from "@/db/apiAuth";
 import { UrlState } from "@/context/context";
@@ -63,6 +64,7 @@ const Login = () => {
   useEffect(() => {
     const handleSuccess = async () => {
       if (!loading && !error && data) {
+        toast.success("Welcome back!");
         await fetchUser();
         setRedirectToDashboard(true);
       }

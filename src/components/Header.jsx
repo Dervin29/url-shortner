@@ -12,6 +12,7 @@ import { BarLoader } from "react-spinners";
 import { Link2, LogOut, LayoutDashboard, Scissors } from "lucide-react";
 
 import { UrlState } from "@/context/context";
+import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { logout } from "@/db/apiAuth";
 
@@ -85,6 +86,7 @@ const Header = () => {
                   onClick={() => {
                     fnLogout().then(async () => {
                       await fetchUser();
+                      toast.success("Logged out");
                       navigate("/");
                     });
                   }}

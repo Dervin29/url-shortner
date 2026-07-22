@@ -15,6 +15,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { signup } from "@/db/apiAuth";
 import { BeatLoader } from "react-spinners";
 import { AlertCircle, Eye, EyeOff, User } from "lucide-react";
+import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { UrlState } from "@/context/context";
 
@@ -64,6 +65,7 @@ const Signup = () => {
   useEffect(() => {
     const handleSuccess = async () => {
       if (!loading && !error && data) {
+        toast.success("Account created successfully!");
         await fetchUser();
         setRedirectToDashboard(true);
       }

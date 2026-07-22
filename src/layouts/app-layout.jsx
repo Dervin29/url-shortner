@@ -1,9 +1,11 @@
 import Header from "@/components/Header";
 import { Outlet } from "react-router-dom";
+import { Toaster } from "sonner";
 
 const AppLayout = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <Toaster richColors closeButton position="top-right" />
       <Header />
       <main className="container mx-auto flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <div className="mt-8">

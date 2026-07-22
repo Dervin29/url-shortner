@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { BeatLoader } from "react-spinners";
 import { QRCode } from "react-qrcode-logo";
 import { UrlState } from "@/context/context";
+import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import {
   Dialog,
@@ -60,6 +61,7 @@ export function CreateLink() {
 
   useEffect(() => {
     if (error === null && data) {
+      toast.success("Link created!");
       navigate(`/link/${data[0].id}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

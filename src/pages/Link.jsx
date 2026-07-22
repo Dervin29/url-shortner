@@ -11,7 +11,6 @@ import { BarLoader, BeatLoader } from "react-spinners";
 import DeviceStats from "@/components/DeviceStats";
 import Location from "@/components/LocationStats";
 
-
 const LinkPage = () => {
   const downloadImage = () => {
     const imageUrl = url?.qr;
@@ -77,11 +76,11 @@ const LinkPage = () => {
             {url?.title}
           </span>
           <a
-            href={`https://trimrr.in/${link}`}
+            href={`${import.meta.env.VITE_APP_URL}/${link}`}
             target="_blank"
             className="text-3xl sm:text-4xl text-blue-400 font-bold hover:underline cursor-pointer"
           >
-            https://trimrr.in/{link}
+            {import.meta.env.VITE_APP_URL}/{link}
           </a>
           <a
             href={url?.original_url}
@@ -98,7 +97,9 @@ const LinkPage = () => {
             <Button
               variant="ghost"
               onClick={() =>
-                navigator.clipboard.writeText(`https://trimrr.in/${link}`)
+                navigator.clipboard.writeText(
+                  `${import.meta.env.VITE_APP_URL}/${link}`,
+                )
               }
             >
               <Copy />

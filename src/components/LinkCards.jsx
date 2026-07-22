@@ -42,7 +42,7 @@ const LinkCards = ({ url, fetchUrls }) => {
         </h2>
 
         <p className="truncate text-lg font-medium text-blue-500">
-          https://trimrr.in/{url?.custom_url || url?.short_url}
+          {import.meta.env.VITE_APP_URL}/{url?.custom_url || url?.short_url}
         </p>
 
         <p className="truncate text-sm text-zinc-400">{url?.original_url}</p>
@@ -58,7 +58,9 @@ const LinkCards = ({ url, fetchUrls }) => {
           size="icon"
           variant="outline"
           onClick={() =>
-            navigator.clipboard.writeText(`https://trimrr.in/${url?.short_url}`)
+            navigator.clipboard.writeText(
+              `${import.meta.env.VITE_APP_URL}/${url?.short_url}`,
+            )
           }
         >
           <Copy className="h-4 w-4" />

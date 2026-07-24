@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { BarLoader } from "react-spinners";
 import { Link2, LogOut, LayoutDashboard, Scissors } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import { UrlState } from "@/context/context";
 import { toast } from "sonner";
@@ -46,6 +47,8 @@ const Header = () => {
         </Link>
 
         {/* Right Section */}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -120,6 +123,7 @@ const Header = () => {
             </Button>
           </div>
         )}
+        </div>
       </div>
 
       {loading && <BarLoader width="100%" color="#3b82f6" />}

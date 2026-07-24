@@ -7,32 +7,35 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab") || "login";
-  return (
-    <div className=" flex flex-col items-center justify-center gap-8 sm:gap-10 px-4">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center">
-        {searchParams.get("createNew")
-          ? "Hold up! Let's Login first"
-          : "Login / Sign Up"}
-      </h1>
 
-      <Tabs
-        value={tab}
-        onValueChange={(v) => navigate(`/auth?tab=${v}`, { replace: true })}
-        className="w-full max-w-md"
-      >
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="signup">Sign Up</TabsTrigger>
-        </TabsList>
-        <div className="mt-2">
-          <TabsContent value="login">
+  return (
+    <div className="flex flex-col items-center justify-center  py-10 px-4">
+      <div className="w-full max-w-md">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6">
+          {searchParams.get("createNew")
+            ? "Hold up! Let's Login first"
+            : "Login / Sign Up"}
+        </h1>
+
+        <Tabs
+          value={tab}
+          onValueChange={(v) => navigate(`/auth?tab=${v}`, { replace: true })}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="login" className="mt-0">
             <Login />
           </TabsContent>
-          <TabsContent value="signup">
+
+          <TabsContent value="signup" className="mt-0">
             <Signup />
           </TabsContent>
-        </div>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 };

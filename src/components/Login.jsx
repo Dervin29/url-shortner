@@ -128,98 +128,96 @@ const Login = () => {
   const showError = (field) => touched[field] && errors[field];
 
   return (
-    <div className="flex items-center justify-center px-4 py-10">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+    <Card className="w-full shadow-xl border-0">
+      <CardHeader className="space-y-2 text-center">
+        <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
 
-          <CardDescription>
-            Sign in to continue to your account.
-          </CardDescription>
+        <CardDescription>
+          Sign in to continue to your account.
+        </CardDescription>
 
-          {errors.api && (
-            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-              <AlertCircle size={16} className="shrink-0" />
-              <span>{errors.api}</span>
-            </div>
-          )}
-          {error && (
-            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-              <AlertCircle size={16} className="shrink-0" />
-              <span>{error.message}</span>
-            </div>
-          )}
-        </CardHeader>
+        {errors.api && (
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle size={16} className="shrink-0" />
+            <span>{errors.api}</span>
+          </div>
+        )}
+        {error && (
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle size={16} className="shrink-0" />
+            <span>{error.message}</span>
+          </div>
+        )}
+      </CardHeader>
 
-        <form onSubmit={handleLogin}>
-          <CardContent className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+      <form onSubmit={handleLogin}>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address</Label>
 
+            <Input
+              ref={emailRef}
+              id="email"
+              name="email"
+              type="email"
+              placeholder="john@example.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              disabled={loading}
+              aria-invalid={showError("email") || undefined}
+            />
+
+            {showError("email") && <Error message={errors.email} />}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+
+            <div className="relative">
               <Input
-                ref={emailRef}
-                id="email"
-                name="email"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.email}
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={formData.password}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 disabled={loading}
-                aria-invalid={showError("email") || undefined}
+                aria-invalid={showError("password") || undefined}
               />
-
-              {showError("email") && <Error message={errors.email} />}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  aria-invalid={showError("password") || undefined}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
-                  disabled={loading}
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-
-              {showError("password") && <Error message={errors.password} />}
-            </div>
-          </CardContent>
-
-          <CardFooter className="flex flex-col gap-4">
-            <Button className="w-full" type="submit" disabled={loading}>
-              {loading ? <BeatLoader size={8} color="white" /> : "Login"}
-            </Button>
-
-            <p className="text-sm text-center text-muted-foreground">
-              Don't have an account?{" "}
-              <span
-                className="cursor-pointer text-primary font-medium hover:underline"
-                onClick={() => navigate("/auth?tab=signup")}
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
+                disabled={loading}
+                tabIndex={-1}
               >
-                Create one
-              </span>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            {showError("password") && <Error message={errors.password} />}
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex flex-col gap-4">
+          <Button className="w-full" type="submit" disabled={loading}>
+            {loading ? <BeatLoader size={8} color="white" /> : "Login"}
+          </Button>
+
+          <p className="text-sm text-center text-muted-foreground">
+            Don't have an account?{" "}
+            <span
+              className="cursor-pointer text-primary font-medium hover:underline"
+              onClick={() => navigate("/auth?tab=signup")}
+            >
+              Create one
+            </span>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
   );
 };
 

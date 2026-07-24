@@ -18,99 +18,112 @@ import { logout } from "@/db/apiAuth";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { user } = UrlState();
+  const { user, fetchUser } = UrlState();
 
   const { loading, fn: fnLogout } = useFetch(logout);
-  const { fetchUser } = UrlState();
 
-  const initials =
-    user?.user_metadata?.name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "U";
+  const initials = user?.user_metadata?.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "U";
+
+  const handleLogout = async () => {
+    await fnLogout();
+    await fetchUser();
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
 
   return (
-    <>
-      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <Scissors className="h-6 w-6 text-blue-500" />
-            <span>Trimrr</span>
-          </Link>
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition-opacity">
+          <Scissors className="h-6 w-6 text-primary" />
+          <span className="hidden sm:inline">Trimrr</span>
+        </Link>
 
-          {/* Right */}
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-full p-0 h-11 w-11">
-                  <Avatar className="h-10 w-10 border">
-                    <AvatarImage src={user.user_metadata.profile_pic} />
-                    <AvatarFallback>{initials}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
+        {/* Right Section */}
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+                <Avatar className="h-10 w-10 border-2 border-primary/10">
+                  <AvatarImage 
+                    src={user.user_metadata?.profile_pic} 
+                    alt={user.user_metadata?.name}
+                  />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-3 py-2">
-                  <p className="font-semibold">{user.user_metadata.name}</p>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="flex items-center gap-2 px-3 py-2">
+                <div className="flex flex-col space-y-0.5">
+                  <p className="text-sm font-semibold">{user.user_metadata?.name}</p>
                   <p className="text-xs text-muted-foreground truncate">
                     {user.email}
                   </p>
                 </div>
+              </div>
 
-                <DropdownMenuSeparator />
+              <DropdownMenuSeparator />
 
-                <DropdownMenuItem
-                  onClick={() => navigate("/dashboard")}
-                  className="cursor-pointer"
-                >
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Dashboard
-                </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/dashboard")}
+                className="cursor-pointer"
+              >
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Dashboard
+              </DropdownMenuItem>
 
-                <DropdownMenuItem
-                  onClick={() => navigate("/dashboard")}
-                  className="cursor-pointer"
-                >
-                  <Link2 className="mr-2 h-4 w-4" />
-                  My Links
-                </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/dashboard")}
+                className="cursor-pointer"
+              >
+                <Link2 className="mr-2 h-4 w-4" />
+                My Links
+              </DropdownMenuItem>
 
-                <DropdownMenuSeparator />
+              <DropdownMenuSeparator />
 
-                <DropdownMenuItem
-                  disabled={loading}
-                  onClick={() => {
-                    fnLogout().then(async () => {
-                      await fetchUser();
-                      toast.success("Logged out");
-                      navigate("/");
-                    });
-                  }}
-                  className="cursor-pointer text-red-500 focus:text-red-500"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => navigate("/auth")}>
-                Login
-              </Button>
+              <DropdownMenuItem
+                disabled={loading}
+                onClick={handleLogout}
+                className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {loading ? "Logging out..." : "Logout"}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/auth")}
+              className="hidden sm:inline-flex"
+            >
+              Login
+            </Button>
 
-              <Button onClick={() => navigate("/auth")}>Get Started</Button>
-            </div>
-          )}
-        </div>
+            <Button 
+              onClick={() => navigate("/auth")}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Get Started
+            </Button>
+          </div>
+        )}
+      </div>
 
-        {loading && <BarLoader width="100%" />}
-      </header>
-    </>
+      {loading && <BarLoader width="100%" color="#3b82f6" />}
+    </header>
   );
 };
 

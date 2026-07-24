@@ -134,147 +134,145 @@ const Signup = () => {
   const showError = (field) => touched[field] && errors[field];
 
   return (
-    <div className="flex items-center justify-center px-4 py-10">
-      <Card className="w-full max-w-md shadow-xl border">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
+    <Card className="w-full shadow-xl border-0">
+      <CardHeader className="space-y-2 text-center">
+        <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
 
-          <CardDescription>
-            Sign up to start shortening and managing your links.
-          </CardDescription>
+        <CardDescription>
+          Sign up to start shortening and managing your links.
+        </CardDescription>
 
-          {errors.api && (
-            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-              <AlertCircle size={16} className="shrink-0" />
-              <span>{errors.api}</span>
-            </div>
-          )}
-          {error && (
-            <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-              <AlertCircle size={16} className="shrink-0" />
-              <span>{error.message}</span>
-            </div>
-          )}
-        </CardHeader>
+        {errors.api && (
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle size={16} className="shrink-0" />
+            <span>{errors.api}</span>
+          </div>
+        )}
+        {error && (
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle size={16} className="shrink-0" />
+            <span>{error.message}</span>
+          </div>
+        )}
+      </CardHeader>
 
-        <form onSubmit={handleSignup}>
-          <CardContent className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Full Name</label>
+      <form onSubmit={handleSignup}>
+        <CardContent className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Full Name</label>
 
-              <Input
-                ref={nameRef}
-                name="name"
-                placeholder="John Doe"
-                value={formData.name}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                aria-invalid={showError("name") || undefined}
-              />
-
-              {showError("name") && <Error message={errors.name} />}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Email</label>
-
-              <Input
-                type="email"
-                name="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                aria-invalid={showError("email") || undefined}
-              />
-
-              {showError("email") && <Error message={errors.email} />}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Password</label>
-
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  aria-invalid={showError("password") || undefined}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
-                  disabled={loading}
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-
-              {showError("password") && <Error message={errors.password} />}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Profile Picture</label>
-
-              <div className="flex items-center gap-4">
-                <div className="shrink-0 size-14 rounded-full overflow-hidden border-2 border-muted bg-muted flex items-center justify-center">
-                  {previewUrl ? (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    <User size={20} className="text-muted-foreground" />
-                  )}
-                </div>
-
-                <Input
-                  type="file"
-                  accept="image/*"
-                  name="profile_pic"
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  disabled={loading}
-                  className="flex-1 cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:opacity-90"
-                  aria-invalid={showError("profile_pic") || undefined}
-                />
-              </div>
-
-              {showError("profile_pic") && <Error message={errors.profile_pic} />}
-            </div>
-          </CardContent>
-
-          <CardFooter className="flex flex-col gap-4">
-            <Button
-              className="w-full h-11 text-base"
-              type="submit"
+            <Input
+              ref={nameRef}
+              name="name"
+              placeholder="John Doe"
+              value={formData.name}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
               disabled={loading}
-            >
-              {loading ? <BeatLoader size={8} color="white" /> : "Create Account"}
-            </Button>
+              aria-invalid={showError("name") || undefined}
+            />
 
-            <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{" "}
-              <span
-                className="cursor-pointer text-primary font-medium hover:underline"
-                onClick={() => navigate("/auth?tab=login")}
+            {showError("name") && <Error message={errors.name} />}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Email</label>
+
+            <Input
+              type="email"
+              name="email"
+              placeholder="john@example.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              disabled={loading}
+              aria-invalid={showError("email") || undefined}
+            />
+
+            {showError("email") && <Error message={errors.email} />}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Password</label>
+
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                aria-invalid={showError("password") || undefined}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
+                disabled={loading}
+                tabIndex={-1}
               >
-                Sign in
-              </span>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            {showError("password") && <Error message={errors.password} />}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Profile Picture</label>
+
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 size-14 rounded-full overflow-hidden border-2 border-muted bg-muted flex items-center justify-center">
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  <User size={20} className="text-muted-foreground" />
+                )}
+              </div>
+
+              <Input
+                type="file"
+                accept="image/*"
+                name="profile_pic"
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                disabled={loading}
+                className="flex-1 cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:opacity-90"
+                aria-invalid={showError("profile_pic") || undefined}
+              />
+            </div>
+
+            {showError("profile_pic") && <Error message={errors.profile_pic} />}
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex flex-col gap-4">
+          <Button
+            className="w-full h-11 text-base"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? <BeatLoader size={8} color="white" /> : "Create Account"}
+          </Button>
+
+          <p className="text-sm text-center text-muted-foreground">
+            Already have an account?{" "}
+            <span
+              className="cursor-pointer text-primary font-medium hover:underline"
+              onClick={() => navigate("/auth?tab=login")}
+            >
+              Sign in
+            </span>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
   );
 };
 

@@ -1,6 +1,7 @@
 import CreateLink from "@/components/CreateLink";
 import Error from "@/components/Error";
 import LinkCards from "@/components/LinkCards";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { UrlState } from "@/context/context";
@@ -9,7 +10,7 @@ import { getUrls } from "@/db/apiUrls";
 import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
 import { BarLoader } from "react-spinners";
-import { Link2, MousePointerClick } from "lucide-react";
+import { ChevronLeft, ChevronRight, Link2, MousePointerClick } from "lucide-react";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,7 +46,18 @@ const Dashboard = () => {
     url?.title?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalClicks = clicks?.reduce((acc, click) => acc + click.count, 0) || 0;
+  const totalClicks = clicks?.length || 0;
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+  const totalPages = Math.ceil((filterUrls?.length || 0) / ITEMS_PER_PAGE);
+  const paginatedUrls = filterUrls?.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   return (
     <div className="flex flex-col gap-8 max-w-6xl mx-auto px-4 py-6">
@@ -115,9 +127,40 @@ const Dashboard = () => {
           </div>
         )}
 
-        {filterUrls?.map((url) => (
+        {paginatedUrls?.map((url) => (
           <LinkCards key={url.id} url={url} fetchUrls={fnUrls} />
         ))}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

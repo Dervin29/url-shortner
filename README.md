@@ -1,8 +1,8 @@
-# URL Shortener
+# Trimrr - URL Shortener
 
-A modern URL shortening application built with React, Vite, Supabase, and ShadCN UI. The application allows users to create, manage, and track shortened URLs with analytics, QR code generation, and authentication.
+A modern URL shortening application built with React, Vite, Supabase, and ShadCN UI. Trimrr turns long URLs into short, powerful links with real-time analytics, custom aliases, and QR codes.
 
-**Live Demo:** https://url-shortner-pearl-psi.vercel.app
+**Live Demo:** https://url-shortner-xi-ten.vercel.app
 
 ---
 
@@ -28,21 +28,26 @@ A modern URL shortening application built with React, Vite, Supabase, and ShadCN
 
 ### Frontend
 
-- React
-- Vite
-- React Router
-- Tailwind CSS
+- React 19
+- Vite 8
+- React Router 7
+- Tailwind CSS 4
 - ShadCN UI
+- Base UI (React-ARIA components)
 - Lucide React
-- React Spinners
-- Yup
+- Recharts
+- Sonner (toast notifications)
+- Yup (form validation)
+- ua-parser-js (user agent parsing)
+- react-qrcode-logo
+- react-spinners
 
 ### Backend & Database
 
 - Supabase
   - Authentication
   - PostgreSQL Database
-  - Storage
+  - Row Level Security
 
 ---
 
@@ -173,9 +178,7 @@ src/
 
 The application is deployed on Vercel.
 
-Live URL:
-
-https://url-shortner-pearl-psi.vercel.app
+Live URL: https://url-shortner-xi-ten.vercel.app
 
 ---
 

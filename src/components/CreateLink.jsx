@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "./ui/card";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 import { BeatLoader } from "react-spinners";
@@ -19,12 +19,12 @@ import {
 } from "./ui/dialog";
 import { createUrl } from "@/db/apiUrls";
 import Error from "./Error";
-import { Plus, Link2, Sparkles } from "lucide-react";
+import { Plus, Sparkles } from "lucide-react";
 
-export function CreateLink() {
+export function CreateLink({ fetchUrls }) {
   const { user } = UrlState();
-  const navigate = useNavigate();
   const qrRef = useRef(null);
+  const titleRef = useRef(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const longLink = searchParams.get("createNew");
@@ -62,9 +62,16 @@ export function CreateLink() {
   useEffect(() => {
     if (error === null && data) {
       toast.success("Link created successfully");
-      navigate(`/link/${data[0]?.id}`);
+      handleDialogOpenChange(false);
+      if (fetchUrls) fetchUrls();
     }
-  }, [error, data, navigate]);
+  }, [error, data]);
+
+  useEffect(() => {
+    if (isOpen && titleRef.current) {
+      titleRef.current.focus();
+    }
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -72,7 +79,6 @@ export function CreateLink() {
       ...prev,
       [id]: value,
     }));
-    // Clear error for this field when user types
     if (errors[id]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -95,7 +101,8 @@ export function CreateLink() {
     }
   };
 
-  const createNewLink = async () => {
+  const createNewLink = async (e) => {
+    e.preventDefault();
     try {
       await schema.validate(formValues, { abortEarly: false });
 
@@ -111,28 +118,20 @@ export function CreateLink() {
 
       await fnCreateUrl(qrBlob);
     } catch (e) {
-      const newErrors = {};
-      e?.inner?.forEach((err) => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
+      if (e?.name === "YupValidationError") {
+        const newErrors = {};
+        e?.inner?.forEach((err) => {
+          newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
 
-      // Focus on first error field
-      const firstErrorField = Object.keys(newErrors)[0];
-      if (firstErrorField) {
-        const element = document.getElementById(firstErrorField);
-        if (element) element.focus();
+        const firstErrorField = Object.keys(newErrors)[0];
+        if (firstErrorField) {
+          const element = document.getElementById(firstErrorField);
+          if (element) element.focus();
+        }
       }
     }
-  };
-
-  const resetForm = () => {
-    setFormValues({
-      title: "",
-      longUrl: "",
-      customUrl: "",
-    });
-    setErrors({});
   };
 
   return (
@@ -152,105 +151,103 @@ export function CreateLink() {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          {/* QR Code Preview */}
-          {formValues.longUrl && (
-            <div className="flex justify-center p-4 bg-muted/30 rounded-lg">
-              <QRCode
-                ref={qrRef}
-                size={180}
-                value={formValues.longUrl}
-                bgColor="#ffffff"
-                fgColor="#1e293b"
-                level="H"
-                includeMargin={false}
-              />
-            </div>
-          )}
+        <form onSubmit={createNewLink}>
+          <div className="space-y-4 py-2">
+            {formValues.longUrl && (
+              <div className="flex justify-center p-4 bg-muted/30 rounded-lg">
+                <QRCode
+                  ref={qrRef}
+                  size={180}
+                  value={formValues.longUrl}
+                  bgColor="#ffffff"
+                  fgColor="#1e293b"
+                  level="H"
+                  includeMargin={false}
+                />
+              </div>
+            )}
 
-          {/* Title Input */}
-          <div className="space-y-1">
-            <label htmlFor="title" className="text-sm font-medium">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="title"
-              placeholder="e.g., My Awesome Link"
-              value={formValues.title}
-              onChange={handleChange}
-              className="focus:border-primary transition-colors"
-              disabled={loading}
-            />
-            {errors.title && <Error message={errors.title} />}
-          </div>
-
-          {/* Long URL Input */}
-          <div className="space-y-1">
-            <label htmlFor="longUrl" className="text-sm font-medium">
-              Long URL <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="longUrl"
-              placeholder="https://example.com/your-very-long-url"
-              value={formValues.longUrl}
-              onChange={handleChange}
-              className="focus:border-primary transition-colors"
-              disabled={loading}
-            />
-            {errors.longUrl && <Error message={errors.longUrl} />}
-          </div>
-
-          {/* Custom URL Input */}
-          <div className="space-y-1">
-            <label htmlFor="customUrl" className="text-sm font-medium">
-              Custom Slug{" "}
-              <span className="text-muted-foreground text-xs">(optional)</span>
-            </label>
-            <div className="flex items-center gap-2">
-              <Card className="p-2 bg-muted/50 whitespace-nowrap text-sm font-mono">
-                {import.meta.env.VITE_APP_URL}/
-              </Card>
+            <div className="space-y-1">
+              <label htmlFor="title" className="text-sm font-medium">
+                Title <span className="text-red-500">*</span>
+              </label>
               <Input
-                id="customUrl"
-                placeholder="my-custom-link"
-                value={formValues.customUrl}
+                ref={titleRef}
+                id="title"
+                placeholder="e.g., My Awesome Link"
+                value={formValues.title}
                 onChange={handleChange}
-                className="flex-1 focus:border-primary transition-colors"
+                className="focus:border-primary transition-colors"
                 disabled={loading}
               />
+              {errors.title && <Error message={errors.title} />}
             </div>
-            {errors.customUrl && <Error message={errors.customUrl} />}
-            {!errors.customUrl && formValues.customUrl && (
-              <p className="text-xs text-muted-foreground">
-                Your link will be: {import.meta.env.VITE_APP_URL}/
-                {formValues.customUrl}
-              </p>
+
+            <div className="space-y-1">
+              <label htmlFor="longUrl" className="text-sm font-medium">
+                Long URL <span className="text-red-500">*</span>
+              </label>
+              <Input
+                id="longUrl"
+                placeholder="https://example.com/your-very-long-url"
+                value={formValues.longUrl}
+                onChange={handleChange}
+                className="focus:border-primary transition-colors"
+                disabled={loading}
+              />
+              {errors.longUrl && <Error message={errors.longUrl} />}
+            </div>
+
+            <div className="space-y-1">
+              <label htmlFor="customUrl" className="text-sm font-medium">
+                Custom Slug{" "}
+                <span className="text-muted-foreground text-xs">(optional)</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <Card className="p-2 bg-muted/50 whitespace-nowrap text-sm font-mono">
+                  {import.meta.env.VITE_APP_URL}/
+                </Card>
+                <Input
+                  id="customUrl"
+                  placeholder="my-custom-link"
+                  value={formValues.customUrl}
+                  onChange={handleChange}
+                  className="flex-1 focus:border-primary transition-colors"
+                  disabled={loading}
+                />
+              </div>
+              {errors.customUrl && <Error message={errors.customUrl} />}
+              {!errors.customUrl && formValues.customUrl && (
+                <p className="text-xs text-muted-foreground">
+                  Your link will be: {import.meta.env.VITE_APP_URL}/
+                  {formValues.customUrl}
+                </p>
+              )}
+            </div>
+
+            {error && (
+              <Error message={error.message || "Failed to create link"} />
             )}
           </div>
 
-          {error && (
-            <Error message={error.message || "Failed to create link"} />
-          )}
-        </div>
-
-        <DialogFooter className="sm:justify-start gap-2">
-          <Button
-            type="button"
-            onClick={createNewLink}
-            disabled={loading}
-            className="bg-primary hover:bg-primary/90 min-w-[100px]"
-          >
-            {loading ? <BeatLoader size={8} color="white" /> : "Create Link"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setIsOpen(false)}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="sm:justify-start gap-2">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="bg-primary hover:bg-primary/90 min-w-[100px]"
+            >
+              {loading ? <BeatLoader size={8} color="white" /> : "Create Link"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

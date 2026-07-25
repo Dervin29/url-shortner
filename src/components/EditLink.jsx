@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "./ui/card";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 import { BeatLoader } from "react-spinners";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ import { Pencil } from "lucide-react";
 
 const EditLink = ({ url, fetchUrls, open, onOpenChange }) => {
   const [errors, setErrors] = useState({});
+  const titleRef = useRef(null);
   const [formValues, setFormValues] = useState({
     title: url?.title || "",
     longUrl: url?.original_url || "",
@@ -33,6 +34,12 @@ const EditLink = ({ url, fetchUrls, open, onOpenChange }) => {
     });
     setErrors({});
   }, [url, open]);
+
+  useEffect(() => {
+    if (open && titleRef.current) {
+      titleRef.current.focus();
+    }
+  }, [open]);
 
   const schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -70,7 +77,8 @@ const EditLink = ({ url, fetchUrls, open, onOpenChange }) => {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     try {
       await schema.validate(formValues, { abortEarly: false });
 
@@ -111,81 +119,89 @@ const EditLink = ({ url, fetchUrls, open, onOpenChange }) => {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
-          <div className="space-y-1">
-            <label htmlFor="title" className="text-sm font-medium">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="title"
-              placeholder="e.g., My Awesome Link"
-              value={formValues.title}
-              onChange={handleChange}
-              className="focus:border-primary transition-colors"
-              disabled={loading}
-            />
-            {errors.title && <Error message={errors.title} />}
-          </div>
-
-          <div className="space-y-1">
-            <label htmlFor="longUrl" className="text-sm font-medium">
-              Long URL <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="longUrl"
-              placeholder="https://example.com/your-very-long-url"
-              value={formValues.longUrl}
-              onChange={handleChange}
-              className="focus:border-primary transition-colors"
-              disabled={loading}
-            />
-            {errors.longUrl && <Error message={errors.longUrl} />}
-          </div>
-
-          <div className="space-y-1">
-            <label htmlFor="customUrl" className="text-sm font-medium">
-              Custom Slug{" "}
-              <span className="text-muted-foreground text-xs">(optional)</span>
-            </label>
-            <div className="flex items-center gap-2">
-              <Card className="p-2 bg-muted/50 whitespace-nowrap text-sm font-mono">
-                {import.meta.env.VITE_APP_URL}/
-              </Card>
+        <form onSubmit={handleSave}>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1">
+              <label htmlFor="title" className="text-sm font-medium">
+                Title <span className="text-red-500">*</span>
+              </label>
               <Input
-                id="customUrl"
-                placeholder="my-custom-link"
-                value={formValues.customUrl}
+                ref={titleRef}
+                id="title"
+                placeholder="e.g., My Awesome Link"
+                value={formValues.title}
                 onChange={handleChange}
-                className="flex-1 focus:border-primary transition-colors"
+                className="focus:border-primary transition-colors"
                 disabled={loading}
               />
+              {errors.title && <Error message={errors.title} />}
             </div>
-            {errors.customUrl && <Error message={errors.customUrl} />}
+
+            <div className="space-y-1">
+              <label htmlFor="longUrl" className="text-sm font-medium">
+                Long URL <span className="text-red-500">*</span>
+              </label>
+              <Input
+                id="longUrl"
+                placeholder="https://example.com/your-very-long-url"
+                value={formValues.longUrl}
+                onChange={handleChange}
+                className="focus:border-primary transition-colors"
+                disabled={loading}
+              />
+              {errors.longUrl && <Error message={errors.longUrl} />}
+            </div>
+
+            <div className="space-y-1">
+              <label htmlFor="customUrl" className="text-sm font-medium">
+                Custom Slug{" "}
+                <span className="text-muted-foreground text-xs">(optional)</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <Card className="p-2 bg-muted/50 whitespace-nowrap text-sm font-mono">
+                  {import.meta.env.VITE_APP_URL}/
+                </Card>
+                <Input
+                  id="customUrl"
+                  placeholder="my-custom-link"
+                  value={formValues.customUrl}
+                  onChange={handleChange}
+                  className="flex-1 focus:border-primary transition-colors"
+                  disabled={loading}
+                />
+              </div>
+              {errors.customUrl && <Error message={errors.customUrl} />}
+              {!errors.customUrl && formValues.customUrl && (
+                <p className="text-xs text-muted-foreground">
+                  Your link will be: {import.meta.env.VITE_APP_URL}/
+                  {formValues.customUrl}
+                </p>
+              )}
+            </div>
+
+            {error && (
+              <Error message={error.message || "Failed to update link"} />
+            )}
           </div>
 
-          {error && (
-            <Error message={error.message || "Failed to update link"} />
-          )}
-        </div>
-
-        <DialogFooter className="sm:justify-start gap-2">
-          <Button
-            type="button"
-            onClick={handleSave}
-            disabled={loading}
-            className="bg-primary hover:bg-primary/90 min-w-[100px]"
-          >
-            {loading ? <BeatLoader size={8} color="white" /> : "Save Changes"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="sm:justify-start gap-2">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="bg-primary hover:bg-primary/90 min-w-[100px]"
+            >
+              {loading ? <BeatLoader size={8} color="white" /> : "Save Changes"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

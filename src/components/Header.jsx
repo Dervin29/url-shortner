@@ -6,9 +6,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { BarLoader } from "react-spinners";
+import { BarLoader, BeatLoader } from "react-spinners";
 import { Link2, LogOut, LayoutDashboard, Scissors } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -16,10 +26,12 @@ import { UrlState } from "@/context/context";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { logout } from "@/db/apiAuth";
+import { useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
   const { user, fetchUser } = UrlState();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   const { loading, fn: fnLogout } = useFetch(logout);
 
@@ -34,6 +46,7 @@ const Header = () => {
     await fnLogout();
     await fetchUser();
     toast.success("Logged out successfully");
+    setIsLogoutDialogOpen(false);
     navigate("/");
   };
 
@@ -49,7 +62,7 @@ const Header = () => {
         {/* Right Section */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
-        {user ? (
+        {user ? (<>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
@@ -85,19 +98,11 @@ const Header = () => {
                 Dashboard
               </DropdownMenuItem>
 
-              <DropdownMenuItem
-                onClick={() => navigate("/dashboard")}
-                className="cursor-pointer"
-              >
-                <Link2 className="mr-2 h-4 w-4" />
-                My Links
-              </DropdownMenuItem>
-
               <DropdownMenuSeparator />
 
               <DropdownMenuItem
                 disabled={loading}
-                onClick={handleLogout}
+                onClick={() => setIsLogoutDialogOpen(true)}
                 className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -105,7 +110,45 @@ const Header = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        ) : (
+
+          <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-destructive">
+                  <LogOut className="h-5 w-5" />
+                  Confirm Logout
+                </DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to log out?
+                  <br />
+                  <span className="text-xs text-muted-foreground mt-2 block">
+                    You will need to sign in again to access your links.
+                  </span>
+                </DialogDescription>
+              </DialogHeader>
+
+              <DialogFooter className="gap-2 sm:gap-0">
+                <DialogClose asChild>
+                  <Button variant="outline" disabled={loading}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  onClick={handleLogout}
+                  disabled={loading}
+                  className="min-w-[80px]"
+                >
+                  {loading ? (
+                    <BeatLoader size={6} color="white" />
+                  ) : (
+                    "Logout"
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>) : (
           <div className="flex items-center gap-2 sm:gap-3">
             <Button 
               variant="ghost" 

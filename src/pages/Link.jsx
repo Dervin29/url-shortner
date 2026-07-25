@@ -15,7 +15,7 @@ import { getClicksForUrl } from "@/db/apiClicks";
 import { deleteUrl, getUrl } from "@/db/apiUrls";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
-import { Copy, Download, LinkIcon, Trash, ExternalLink, Calendar, ArrowLeft, Pencil } from "lucide-react";
+import { Copy, Download, LinkIcon, Trash, ExternalLink, Calendar, ArrowLeft, Pencil, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BarLoader, BeatLoader } from "react-spinners";
@@ -56,6 +56,16 @@ const LinkPage = () => {
       fnStats();
     }
   }, [loading, error, url]);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (!document.hidden && url) {
+        fnStats();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [url]);
 
   // Handle errors
   useEffect(() => {
@@ -310,10 +320,19 @@ const LinkPage = () => {
 
         {/* Stats Section */}
         <Card className="lg:col-span-3 h-fit shadow-sm">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-2xl font-bold sm:text-3xl">
               Statistics
             </CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => fnStats()}
+              disabled={loadingStats}
+              title="Refresh stats"
+            >
+              <RefreshCw className={`h-4 w-4 ${loadingStats ? "animate-spin" : ""}`} />
+            </Button>
           </CardHeader>
 
           {stats?.length > 0 ? (
@@ -351,6 +370,10 @@ const LinkPage = () => {
                   <LinkIcon className="h-12 w-12 text-muted-foreground/50" />
                   <p>No statistics yet</p>
                   <p className="text-sm">Share your link to start collecting data</p>
+                  <Button variant="ghost" size="sm" onClick={() => fnStats()} className="gap-2 mt-2">
+                    <RefreshCw className="h-4 w-4" />
+                    Refresh
+                  </Button>
                 </div>
               )}
             </CardContent>

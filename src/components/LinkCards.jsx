@@ -10,15 +10,17 @@ import {
   DialogFooter,
   DialogClose,
 } from "./ui/dialog";
-import { Copy, Delete, Download, ExternalLink, Calendar } from "lucide-react";
+import { Copy, Delete, Download, ExternalLink, Calendar, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { deleteUrl } from "@/db/apiUrls";
 import { BeatLoader } from "react-spinners";
 import { useState } from "react";
+import EditLink from "./EditLink";
 
-const LinkCards = ({ url, fetchUrls }) => {
+const LinkCards = ({ url, fetchUrls, selected, onToggle }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
   const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, url?.id);
 
@@ -51,7 +53,7 @@ const LinkCards = ({ url, fetchUrls }) => {
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Copied to clipboard! 🎉");
+      toast.success("Copied to clipboard");
     } catch (error) {
       // Fallback for older browsers
       const textarea = document.createElement("textarea");
@@ -60,7 +62,7 @@ const LinkCards = ({ url, fetchUrls }) => {
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      toast.success("Copied to clipboard! 🎉");
+      toast.success("Copied to clipboard");
     }
   };
 
@@ -84,6 +86,16 @@ const LinkCards = ({ url, fetchUrls }) => {
 
   return (
     <div className="group flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 rounded-xl border border-border bg-card/80 p-4 sm:p-5 transition-all hover:border-primary/40 hover:shadow-lg">
+      {/* Selection Checkbox */}
+      <div className="flex shrink-0 items-center justify-center w-full sm:w-auto sm:self-center">
+        <input
+          type="checkbox"
+          checked={selected || false}
+          onChange={() => onToggle(url?.id)}
+          className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
+        />
+      </div>
+
       {/* QR Code */}
       <div className="flex shrink-0 justify-center w-full sm:w-auto">
         <img
@@ -144,6 +156,23 @@ const LinkCards = ({ url, fetchUrls }) => {
         >
           <Download className="h-4 w-4" />
         </Button>
+
+        <Button
+          size="icon"
+          variant="ghost"
+          className="hover:bg-blue-500/10 hover:text-blue-500 transition-colors"
+          onClick={() => setIsEditDialogOpen(true)}
+          title="Edit link"
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+
+        <EditLink
+          url={url}
+          fetchUrls={fetchUrls}
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+        />
 
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogTrigger asChild>

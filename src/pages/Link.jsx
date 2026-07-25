@@ -15,18 +15,20 @@ import { getClicksForUrl } from "@/db/apiClicks";
 import { deleteUrl, getUrl } from "@/db/apiUrls";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
-import { Copy, Download, LinkIcon, Trash, ExternalLink, Calendar, ArrowLeft } from "lucide-react";
+import { Copy, Download, LinkIcon, Trash, ExternalLink, Calendar, ArrowLeft, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BarLoader, BeatLoader } from "react-spinners";
 import DeviceStats from "@/components/DeviceStats";
 import Location from "@/components/LocationStats";
+import EditLink from "@/components/EditLink";
 
 const LinkPage = () => {
   const navigate = useNavigate();
   const { user } = UrlState();
   const { id } = useParams();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const {
     loading,
@@ -92,7 +94,7 @@ const LinkPage = () => {
   const copyToClipboard = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Copied to clipboard! 🎉");
+      toast.success("Copied to clipboard");
     } catch (error) {
       // Fallback for older browsers
       const textarea = document.createElement("textarea");
@@ -101,7 +103,7 @@ const LinkPage = () => {
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      toast.success("Copied to clipboard! 🎉");
+      toast.success("Copied to clipboard");
     }
   };
 
@@ -226,6 +228,22 @@ const LinkPage = () => {
               <Download className="h-4 w-4" />
               Download QR
             </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(true)}
+              className="gap-2"
+            >
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+
+            <EditLink
+              url={url}
+              fetchUrls={fnGetUrl}
+              open={isEditDialogOpen}
+              onOpenChange={setIsEditDialogOpen}
+            />
 
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
               <DialogTrigger asChild>

@@ -1,12 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "./ui/card";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { BeatLoader } from "react-spinners";
-import { QRCode } from "react-qrcode-logo";
-import { UrlState } from "@/context/context";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import {
@@ -15,27 +12,27 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
-import { createUrl } from "@/db/apiUrls";
+import { updateUrl } from "@/db/apiUrls";
 import Error from "./Error";
-import { Plus, Link2, Sparkles } from "lucide-react";
+import { Pencil } from "lucide-react";
 
-export function CreateLink() {
-  const { user } = UrlState();
-  const navigate = useNavigate();
-  const qrRef = useRef(null);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const longLink = searchParams.get("createNew");
-
+const EditLink = ({ url, fetchUrls, open, onOpenChange }) => {
   const [errors, setErrors] = useState({});
-  const [isOpen, setIsOpen] = useState(!!longLink);
   const [formValues, setFormValues] = useState({
-    title: "",
-    longUrl: longLink || "",
-    customUrl: "",
+    title: url?.title || "",
+    longUrl: url?.original_url || "",
+    customUrl: url?.custom_url || "",
   });
+
+  useEffect(() => {
+    setFormValues({
+      title: url?.title || "",
+      longUrl: url?.original_url || "",
+      customUrl: url?.custom_url || "",
+    });
+    setErrors({});
+  }, [url, open]);
 
   const schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -55,16 +52,8 @@ export function CreateLink() {
   const {
     loading,
     error,
-    data,
-    fn: fnCreateUrl,
-  } = useFetch(createUrl, { ...formValues, user_id: user?.id });
-
-  useEffect(() => {
-    if (error === null && data) {
-      toast.success("Link created successfully");
-      navigate(`/link/${data[0]?.id}`);
-    }
-  }, [error, data, navigate]);
+    fn: fnUpdateUrl,
+  } = useFetch(updateUrl, url?.id);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -72,7 +61,6 @@ export function CreateLink() {
       ...prev,
       [id]: value,
     }));
-    // Clear error for this field when user types
     if (errors[id]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -82,93 +70,48 @@ export function CreateLink() {
     }
   };
 
-  const handleDialogOpenChange = (open) => {
-    setIsOpen(open);
-    if (!open) {
-      setSearchParams({});
-      setFormValues({
-        title: "",
-        longUrl: "",
-        customUrl: "",
-      });
-      setErrors({});
-    }
-  };
-
-  const createNewLink = async () => {
+  const handleSave = async () => {
     try {
       await schema.validate(formValues, { abortEarly: false });
 
-      let qrBlob = null;
-      try {
-        if (qrRef.current?.canvasRef?.current) {
-          const canvas = qrRef.current.canvasRef.current;
-          qrBlob = await new Promise((resolve) => canvas.toBlob(resolve));
-        }
-      } catch (qrError) {
-        console.warn("QR code generation failed:", qrError);
-      }
+      const updates = {
+        title: formValues.title,
+        original_url: formValues.longUrl,
+        custom_url: formValues.customUrl || null,
+      };
 
-      await fnCreateUrl(qrBlob);
+      await fnUpdateUrl(updates);
+      toast.success("Link updated successfully");
+      fetchUrls();
+      onOpenChange(false);
     } catch (e) {
-      const newErrors = {};
-      e?.inner?.forEach((err) => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
+      if (e?.name === "YupValidationError") {
+        const newErrors = {};
+        e?.inner?.forEach((err) => {
+          newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
 
-      // Focus on first error field
-      const firstErrorField = Object.keys(newErrors)[0];
-      if (firstErrorField) {
-        const element = document.getElementById(firstErrorField);
-        if (element) element.focus();
+        const firstErrorField = Object.keys(newErrors)[0];
+        if (firstErrorField) {
+          const element = document.getElementById(firstErrorField);
+          if (element) element.focus();
+        }
       }
     }
   };
 
-  const resetForm = () => {
-    setFormValues({
-      title: "",
-      longUrl: "",
-      customUrl: "",
-    });
-    setErrors({});
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="gap-2 bg-primary hover:bg-primary/90 hover:shadow-lg transition-all">
-          <Plus className="h-4 w-4" />
-          Create New Link
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl font-bold">
-            <Sparkles className="h-5 w-5 text-primary" />
-            Create New Link
+            <Pencil className="h-5 w-5 text-primary" />
+            Edit Link
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          {/* QR Code Preview */}
-          {formValues.longUrl && (
-            <div className="flex justify-center p-4 bg-muted/30 rounded-lg">
-              <QRCode
-                ref={qrRef}
-                size={180}
-                value={formValues.longUrl}
-                bgColor="#ffffff"
-                fgColor="#1e293b"
-                level="H"
-                includeMargin={false}
-              />
-            </div>
-          )}
-
-          {/* Title Input */}
           <div className="space-y-1">
             <label htmlFor="title" className="text-sm font-medium">
               Title <span className="text-red-500">*</span>
@@ -184,7 +127,6 @@ export function CreateLink() {
             {errors.title && <Error message={errors.title} />}
           </div>
 
-          {/* Long URL Input */}
           <div className="space-y-1">
             <label htmlFor="longUrl" className="text-sm font-medium">
               Long URL <span className="text-red-500">*</span>
@@ -200,7 +142,6 @@ export function CreateLink() {
             {errors.longUrl && <Error message={errors.longUrl} />}
           </div>
 
-          {/* Custom URL Input */}
           <div className="space-y-1">
             <label htmlFor="customUrl" className="text-sm font-medium">
               Custom Slug{" "}
@@ -220,32 +161,26 @@ export function CreateLink() {
               />
             </div>
             {errors.customUrl && <Error message={errors.customUrl} />}
-            {!errors.customUrl && formValues.customUrl && (
-              <p className="text-xs text-muted-foreground">
-                Your link will be: {import.meta.env.VITE_APP_URL}/
-                {formValues.customUrl}
-              </p>
-            )}
           </div>
 
           {error && (
-            <Error message={error.message || "Failed to create link"} />
+            <Error message={error.message || "Failed to update link"} />
           )}
         </div>
 
         <DialogFooter className="sm:justify-start gap-2">
           <Button
             type="button"
-            onClick={createNewLink}
+            onClick={handleSave}
             disabled={loading}
             className="bg-primary hover:bg-primary/90 min-w-[100px]"
           >
-            {loading ? <BeatLoader size={8} color="white" /> : "Create Link"}
+            {loading ? <BeatLoader size={8} color="white" /> : "Save Changes"}
           </Button>
           <Button
             type="button"
             variant="outline"
-            onClick={() => setIsOpen(false)}
+            onClick={() => onOpenChange(false)}
             disabled={loading}
           >
             Cancel
@@ -254,6 +189,6 @@ export function CreateLink() {
       </DialogContent>
     </Dialog>
   );
-}
+};
 
-export default CreateLink;
+export default EditLink;

@@ -6,14 +6,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { UrlState } from "@/context/context";
 import { getClicksForUrls } from "@/db/apiClicks";
-import { getUrls } from "@/db/apiUrls";
+import { getUrls, deleteUrls } from "@/db/apiUrls";
 import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
-import { BarLoader } from "react-spinners";
-import { ChevronLeft, ChevronRight, Link2, MousePointerClick } from "lucide-react";
+import { toast } from "sonner";
+import { BarLoader, BeatLoader } from "react-spinners";
+import { ChevronLeft, ChevronRight, Link2, MousePointerClick, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
   const { user } = UrlState();
   
   const {
@@ -28,6 +41,11 @@ const Dashboard = () => {
     data: clicks,
     fn: fnClicks,
   } = useFetch((_, urlIds) => getClicksForUrls(urlIds));
+
+  const {
+    loading: loadingBulkDelete,
+    fn: fnBulkDelete,
+  } = useFetch((_, ids) => deleteUrls(ids));
 
   useEffect(() => {
     if (user?.id) {
@@ -59,9 +77,36 @@ const Dashboard = () => {
     setCurrentPage(1);
   }, [searchQuery]);
 
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (!paginatedUrls) return;
+    if (selectedIds.length === paginatedUrls.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedUrls.map((u) => u.id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    try {
+      await fnBulkDelete(selectedIds);
+      toast.success(`${selectedIds.length} link(s) deleted successfully`);
+      setSelectedIds([]);
+      setIsBulkDeleteDialogOpen(false);
+      fnUrls();
+    } catch (error) {
+      toast.error("Failed to delete selected links");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 max-w-6xl mx-auto px-4 py-6">
-      {(loading || loadingClicks) && (
+      {(loading || loadingClicks || loadingBulkDelete) && (
         <BarLoader width="100%" color="#3b82f6" className="mb-4" />
       )}
 
@@ -115,6 +160,33 @@ const Dashboard = () => {
           )}
         </div>
 
+        {/* Bulk Actions Toolbar */}
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 px-1">
+            <input
+              type="checkbox"
+              checked={
+                paginatedUrls?.length > 0 &&
+                selectedIds.length === paginatedUrls.length
+              }
+              onChange={toggleSelectAll}
+              className="h-5 w-5 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <span className="text-sm text-muted-foreground">
+              {selectedIds.length} selected
+            </span>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setIsBulkDeleteDialogOpen(true)}
+              className="ml-auto gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Selected
+            </Button>
+          </div>
+        )}
+
         {error && <Error message={error.message} />}
 
         {!loading && !error && filterUrls?.length === 0 && !searchQuery && (
@@ -128,7 +200,13 @@ const Dashboard = () => {
         )}
 
         {paginatedUrls?.map((url) => (
-          <LinkCards key={url.id} url={url} fetchUrls={fnUrls} />
+          <LinkCards
+            key={url.id}
+            url={url}
+            fetchUrls={fnUrls}
+            selected={selectedIds.includes(url.id)}
+            onToggle={toggleSelect}
+          />
         ))}
 
         {totalPages > 1 && (
@@ -162,6 +240,45 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              Delete {selectedIds.length} Link(s)
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {selectedIds.length} selected link(s)?
+              <br />
+              <span className="text-xs text-muted-foreground mt-2 block">
+                This action cannot be undone. All analytics and data will be permanently removed.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <DialogClose asChild>
+              <Button variant="outline" disabled={loadingBulkDelete}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={loadingBulkDelete}
+              className="min-w-[80px]"
+            >
+              {loadingBulkDelete ? (
+                <BeatLoader size={6} color="white" />
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -93,6 +93,22 @@ export async function createUrl(
   return data;
 }
 
+// update url
+export async function updateUrl(id, updates) {
+  const { data, error } = await supabase
+    .from("urls")
+    .update(updates)
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Unable to update URL");
+  }
+
+  return data;
+}
+
 // delete url
 export async function deleteUrl(id) {
   const { data, error } = await supabase.from("urls").delete().eq("id", id);
@@ -100,6 +116,18 @@ export async function deleteUrl(id) {
   if (error) {
     console.error(error);
     throw new Error("Unable to delete Url");
+  }
+
+  return data;
+}
+
+// bulk delete urls
+export async function deleteUrls(ids) {
+  const { data, error } = await supabase.from("urls").delete().in("id", ids);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Unable to delete selected URLs");
   }
 
   return data;

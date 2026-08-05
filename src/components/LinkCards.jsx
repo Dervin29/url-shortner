@@ -1,4 +1,10 @@
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import useFetch from "@/hooks/useFetch";
+import { deleteUrl } from "@/db/apiUrls";
+import { useState } from "react";
+import { Calendar, MousePointerClick, Trash2, Download, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -10,17 +16,12 @@ import {
   DialogFooter,
   DialogClose,
 } from "./ui/dialog";
-import { Copy, Delete, Download, ExternalLink, Calendar, Pencil, Check } from "lucide-react";
-import { toast } from "sonner";
-import useFetch from "@/hooks/useFetch";
-import { deleteUrl } from "@/db/apiUrls";
-import { BeatLoader } from "react-spinners";
-import { useState } from "react";
+import CopyButton from "./CopyButton";
 import EditLink from "./EditLink";
 
-const LinkCards = ({ url, fetchUrls, selected, onToggle }) => {
+const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  
+
   const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, url?.id);
 
   const downloadImage = () => {
@@ -28,208 +29,223 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle }) => {
       toast.error("QR code not available");
       return;
     }
-    
+
     try {
-      const imageUrl = url.qr;
-      const fileName = url.title || "qrcode";
-      
       const anchor = document.createElement("a");
-      anchor.href = imageUrl;
-      anchor.download = `${fileName}-qrcode.png`;
+      anchor.href = url.qr;
+      anchor.download = `${url.title || "qrcode"}-qrcode.png`;
       anchor.target = "_blank";
-      
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
-      
-      toast.success("QR code downloaded!");
-    } catch (error) {
+      toast.success("QR code downloaded");
+    } catch {
       toast.error("Failed to download QR code");
-      console.error("Download error:", error);
-    }
-  };
-
-  const copyToClipboard = async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success("Copied to clipboard");
-    } catch (error) {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      toast.success("Copied to clipboard");
     }
   };
 
   const handleDelete = async () => {
-    try {
-      await fnDelete();
+    const result = await fnDelete();
+    if (result) {
       await fetchUrls();
-      toast.success("Link deleted successfully");
+      toast.success("Link deleted");
       setIsDeleteDialogOpen(false);
-    } catch (error) {
+    } else {
       toast.error("Failed to delete link");
     }
   };
 
-  const shortUrl = `${import.meta.env.VITE_APP_URL}/${url?.custom_url || url?.short_url}`;
-  const createdDate = url?.created_at ? new Date(url.created_at).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  }) : '';
+  const shortUrl = `${import.meta.env.VITE_APP_URL}/${
+    url?.custom_url || url?.short_url
+  }`;
+  const createdDate = url?.created_at
+    ? new Date(url.created_at).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
 
   return (
-    <div className={`
-      group flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 
-      rounded-xl border p-4 sm:p-5 transition-all duration-200
-      ${selected 
-        ? 'border-primary/50 bg-primary/5 shadow-md shadow-primary/5' 
-        : 'border-border bg-card/80 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5'
-      }
-    `}>
-      {/* Selection Checkbox */}
-      <div className="flex shrink-0 items-center justify-center w-full sm:w-auto sm:self-center">
-        <div className="relative">
-          <input
-            type="checkbox"
-            checked={selected || false}
-            onChange={() => onToggle(url?.id)}
-            className="h-5 w-5 cursor-pointer rounded border-muted-foreground/30 text-primary focus:ring-primary focus:ring-offset-0 transition-colors"
-          />
-          {selected && (
-            <Check className="absolute inset-0 h-5 w-5 text-primary pointer-events-none p-0.5" />
-          )}
-        </div>
-      </div>
-
-      {/* QR Code */}
-      <div className="flex shrink-0 justify-center w-full sm:w-auto">
-        <img
-          src={url?.qr}
-          alt={`QR Code for ${url?.title || 'link'}`}
-          className="h-20 w-20 sm:h-24 sm:w-24 rounded-lg border bg-white p-1.5 shadow-sm transition-all duration-200 group-hover:scale-105 group-hover:shadow-md dark:bg-white"
-          loading="lazy"
+    <article
+      className={cn(
+        "group flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
+        selected
+          ? "border-primary/50 bg-primary/5 shadow-sm"
+          : "border-border hover:border-primary/30 hover:shadow-md",
+      )}
+    >
+      {/* Selection checkbox */}
+      <div className="shrink-0">
+        <input
+          type="checkbox"
+          checked={selected || false}
+          onChange={() => onToggle?.(url?.id)}
+          aria-label={`Select ${url?.title || "link"}`}
+          className="size-4.5 cursor-pointer rounded border-muted-foreground/30 text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 
-      {/* Content */}
+      {/* QR code */}
       <Link
         to={`/link/${url?.id}`}
-        className="flex flex-1 flex-col space-y-1 overflow-hidden w-full sm:w-auto group/link"
+        className="shrink-0"
+        aria-label={`View stats for ${url?.title || "link"}`}
       >
-        <div className="flex items-center gap-2">
-          <h2 className="truncate text-lg sm:text-xl font-semibold transition-colors group-hover/link:text-primary">
-            {url?.title || 'Untitled Link'}
+        <img
+          src={url?.qr}
+          alt={`QR code for ${url?.title || "link"}`}
+          className="size-20 rounded-lg border bg-white p-1.5 shadow-sm transition-transform duration-200 group-hover:scale-105 sm:size-24"
+          loading="lazy"
+        />
+      </Link>
+
+      {/* Content */}
+      <div className="min-w-0 flex-1 basis-56">
+        <Link
+          to={`/link/${url?.id}`}
+          className="group/link block"
+          aria-label={`View stats for ${url?.title || "link"}`}
+        >
+          <h2 className="truncate text-base font-semibold transition-colors group-hover/link:text-primary sm:text-lg">
+            {url?.title || "Untitled Link"}
           </h2>
+        </Link>
+
+        <div className="mt-1 flex min-w-0 items-center gap-1.5">
+          <a
+            href={shortUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="min-w-0 truncate font-mono text-sm text-primary hover:underline"
+            title={shortUrl}
+          >
+            {shortUrl}
+          </a>
+          <CopyButton
+            text={shortUrl}
+            size="icon-xs"
+            className="shrink-0 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          />
+          <a
+            href={shortUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-label="Open shortened link in new tab"
+            title="Open link"
+          >
+            <ExternalLink className="size-3.5" aria-hidden="true" />
+          </a>
         </div>
 
-        <p className="truncate text-sm text-muted-foreground">
+        <p className="mt-1 truncate text-sm text-muted-foreground">
           {url?.original_url}
         </p>
 
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Calendar className="h-3 w-3" />
-          <span>{createdDate}</span>
-          <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-          <span className="capitalize">
-            {new Date(url?.created_at).toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="size-3.5" aria-hidden="true" />
+            <time dateTime={url?.created_at}>{createdDate}</time>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <MousePointerClick className="size-3.5" aria-hidden="true" />
+            <span>
+              <span className="font-medium text-foreground">
+                {clickCount.toLocaleString()}
+              </span>{" "}
+              click{clickCount === 1 ? "" : "s"}
+            </span>
+          </span>
+          <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-500">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-40" />
+              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+            </span>
+            Active
           </span>
         </div>
-      </Link>
+      </div>
 
       {/* Actions */}
-      <div className="flex shrink-0 items-center gap-1 self-end sm:self-center w-full sm:w-auto justify-end sm:justify-start border-t sm:border-t-0 border-border pt-3 sm:pt-0 mt-2 sm:mt-0">
+      <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:self-center">
         <Button
-          size="icon"
+          size="icon-sm"
           variant="ghost"
-          className="h-8 w-8 hover:bg-primary/10 hover:text-primary transition-colors"
-          onClick={() => copyToClipboard(shortUrl)}
-          title="Copy link"
-        >
-          <Copy className="h-3.5 w-3.5" />
-        </Button>
-
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 hover:bg-emerald-500/10 hover:text-emerald-500 transition-colors"
+          className="text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-600"
           onClick={downloadImage}
           title="Download QR code"
+          aria-label="Download QR code"
           disabled={!url?.qr}
         >
-          <Download className="h-3.5 w-3.5" />
+          <Download className="size-4" aria-hidden="true" />
         </Button>
 
         <EditLink
           url={url}
           fetchUrls={fetchUrls}
-          iconOnly={false}
+          iconOnly
           buttonVariant="ghost"
-          className="h-8 w-8 hover:bg-blue-500/10 hover:text-blue-500"
+          className="text-muted-foreground hover:bg-primary/10 hover:text-primary"
         />
 
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-colors"
-              title="Delete link"
-              disabled={loadingDelete}
-            >
-              {loadingDelete ? (
-                <BeatLoader size={4} color="#ef4444" />
-              ) : (
-                <Delete className="h-3.5 w-3.5" />
-              )}
-            </Button>
-          </DialogTrigger>
-          
+          <DialogTrigger
+            render={
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                title="Delete link"
+                aria-label="Delete link"
+                disabled={loadingDelete}
+              >
+                {loadingDelete ? (
+                  <span className="size-4 animate-spin rounded-full border-2 border-destructive/40 border-t-destructive" />
+                ) : (
+                  <Trash2 className="size-4" aria-hidden="true" />
+                )}
+              </Button>
+            }
+          />
+
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-destructive">
-                <Delete className="h-5 w-5" />
+                <Trash2 className="size-5" aria-hidden="true" />
                 Delete Link
               </DialogTitle>
-              <DialogDescription className="pt-2">
-                Are you sure you want to delete "<span className="font-medium text-foreground">{url?.title || 'this link'}</span>"?
-                <br />
-                <span className="text-xs text-muted-foreground mt-2 block">
-                  This action cannot be undone. All analytics and data will be permanently removed.
+              <DialogDescription className="pt-1">
+                Are you sure you want to delete{" "}
+                <span className="font-medium text-foreground">
+                  {url?.title || "this link"}
                 </span>
+                ? This action cannot be undone and all analytics data will be
+                permanently removed.
               </DialogDescription>
             </DialogHeader>
-            
-            <DialogFooter className="gap-2 sm:gap-0">
-              <DialogClose asChild>
-                <Button variant="outline" disabled={loadingDelete}>
-                  Cancel
-                </Button>
-              </DialogClose>
+
+            <DialogFooter className="gap-2 sm:gap-2">
+              <DialogClose
+                render={
+                  <Button variant="outline" disabled={loadingDelete}>
+                    Cancel
+                  </Button>
+                }
+              />
               <Button
                 variant="destructive"
                 onClick={handleDelete}
                 disabled={loadingDelete}
-                className="min-w-[80px]"
+                className="min-w-24"
               >
-                {loadingDelete ? (
-                  <BeatLoader size={6} color="white" />
-                ) : (
-                  "Delete"
-                )}
+                {loadingDelete ? "Deleting..." : "Delete"}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-    </div>
+    </article>
   );
 };
 

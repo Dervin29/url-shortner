@@ -1,27 +1,54 @@
-import Header from "@/components/Header";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
+import Header from "@/components/Header";
+import { useTheme } from "@/context/theme";
 
 const AppLayout = () => {
+  const { pathname } = useLocation();
+  const { theme } = useTheme();
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Toaster richColors closeButton position="top-right" />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
+      <Toaster
+        richColors
+        closeButton
+        position="top-right"
+        theme={theme}
+        toastOptions={{
+          classNames: {
+            toast:
+              "group-[.toaster]:rounded-lg group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+          },
+        }}
+      />
+
       <Header />
-      <main className="container mx-auto flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mt-8">
-          <Outlet />
+
+      <main
+        id="main-content"
+        className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8"
+      >
+        <div key={pathname} className="page-enter mt-2">
+          <div className="mx-auto w-full max-w-6xl">
+            <Outlet />
+          </div>
         </div>
       </main>
 
       <footer className="border-t bg-muted/30">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          Built by{" "}
-          <span className="font-semibold text-foreground">
-            Alan Derwin
-          </span>{" "}
-          <span className="text-primary">
-            © {new Date().getFullYear()}
-          </span>
+          <p>
+            Built by{" "}
+            <span className="font-semibold text-foreground">Alan Derwin</span>{" "}
+            <span className="text-primary">© {new Date().getFullYear()}</span>
+          </p>
         </div>
       </footer>
     </div>

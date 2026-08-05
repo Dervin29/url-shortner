@@ -1,17 +1,16 @@
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import * as yup from "yup";
+import { toast } from "sonner";
+import { Plus, QrCode, Sparkles } from "lucide-react";
+import { QRCode } from "react-qrcode-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "./ui/card";
-import { useSearchParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import * as yup from "yup";
-import { BeatLoader } from "react-spinners";
-import { QRCode } from "react-qrcode-logo";
-import { UrlState } from "@/context/context";
-import { toast } from "sonner";
-import useFetch from "@/hooks/useFetch";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -19,7 +18,25 @@ import {
 } from "./ui/dialog";
 import { createUrl } from "@/db/apiUrls";
 import Error from "./Error";
-import { Plus, Sparkles } from "lucide-react";
+import useFetch from "@/hooks/useFetch";
+import { UrlState } from "@/context/context";
+
+const schema = yup.object().shape({
+  title: yup.string().required("Title is required"),
+  longUrl: yup
+    .string()
+    .url("Please enter a valid URL (include http:// or https://)")
+    .required("Long URL is required"),
+  customUrl: yup
+    .string()
+    .transform((value) => (value === "" ? undefined : value))
+    .matches(
+      /^[a-zA-Z0-9-_]+$/,
+      "Only letters, numbers, hyphens, and underscores allowed",
+    ),
+});
+
+const emptyForm = { title: "", longUrl: "", customUrl: "" };
 
 export function CreateLink({ fetchUrls }) {
   const { user } = UrlState();
@@ -37,75 +54,61 @@ export function CreateLink({ fetchUrls }) {
     customUrl: "",
   });
 
-  const schema = yup.object().shape({
-    title: yup.string().required("Title is required"),
-    longUrl: yup
-      .string()
-      .url("Please enter a valid URL (include http:// or https://)")
-      .required("Long URL is required"),
-    customUrl: yup
-      .string()
-      .transform((value) => (value === "" ? undefined : value))
-      .matches(
-        /^[a-zA-Z0-9\-_]+$/,
-        "Only letters, numbers, hyphens, and underscores allowed",
-      ),
+  const { loading, error, fn: fnCreateUrl } = useFetch(createUrl, {
+    ...formValues,
+    user_id: user?.id,
   });
 
-  const {
-    loading,
-    error,
-    data,
-    fn: fnCreateUrl,
-  } = useFetch(createUrl, { ...formValues, user_id: user?.id });
-
   useEffect(() => {
-    if (error === null && data) {
-      toast.success("Link created successfully");
-      handleDialogOpenChange(false);
-      if (fetchUrls) fetchUrls();
-    }
-  }, [error, data]);
-
-  useEffect(() => {
-    if (isOpen && titleRef.current) {
-      titleRef.current.focus();
+    if (isOpen) {
+      const timer = window.setTimeout(() => titleRef.current?.focus(), 50);
+      return () => window.clearTimeout(timer);
     }
   }, [isOpen]);
-
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-    if (errors[id]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[id];
-        return newErrors;
-      });
-    }
-  };
 
   const handleDialogOpenChange = (open) => {
     setIsOpen(open);
     if (!open) {
       setSearchParams({});
-      setFormValues({
-        title: "",
-        longUrl: "",
-        customUrl: "",
-      });
+      setFormValues(emptyForm);
       setErrors({});
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+  };
+
+  const focusFirstError = (fieldErrors) => {
+    const first = Object.keys(fieldErrors)[0];
+    if (first) document.getElementById(`create-${first}`)?.focus();
   };
 
   const createNewLink = async (e) => {
     e.preventDefault();
     try {
       await schema.validate(formValues, { abortEarly: false });
+    } catch (err) {
+      if (err?.name === "YupValidationError") {
+        const newErrors = {};
+        err.inner.forEach((fieldError) => {
+          newErrors[fieldError.path] = fieldError.message;
+        });
+        setErrors(newErrors);
+        focusFirstError(newErrors);
+      }
+      return;
+    }
 
+    try {
       let qrBlob = null;
       try {
         if (qrRef.current?.canvasRef?.current) {
@@ -115,49 +118,51 @@ export function CreateLink({ fetchUrls }) {
       } catch (qrError) {
         console.warn("QR code generation failed:", qrError);
       }
-
-      await fnCreateUrl(qrBlob);
-    } catch (e) {
-      if (e?.name === "YupValidationError") {
-        const newErrors = {};
-        e?.inner?.forEach((err) => {
-          newErrors[err.path] = err.message;
-        });
-        setErrors(newErrors);
-
-        const firstErrorField = Object.keys(newErrors)[0];
-        if (firstErrorField) {
-          const element = document.getElementById(firstErrorField);
-          if (element) element.focus();
-        }
+      const result = await fnCreateUrl(qrBlob);
+      if (result) {
+        toast.success("Link created");
+        handleDialogOpenChange(false);
+        fetchUrls?.();
       }
+    } catch (err) {
+      // API errors surface through the `error` state and are rendered inline
+      console.error(err);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="gap-2 bg-primary hover:bg-primary/90 hover:shadow-lg transition-all">
-          <Plus className="h-4 w-4" />
-          Create New Link
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button className="gap-2 shadow-sm transition-all hover:shadow-md">
+            <Plus className="size-4" aria-hidden="true" />
+            Create New Link
+          </Button>
+        }
+      />
 
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl font-bold">
-            <Sparkles className="h-5 w-5 text-primary" />
+          <DialogTitle className="flex items-center gap-2 text-lg font-bold">
+            <Sparkles className="size-5 text-primary" aria-hidden="true" />
             Create New Link
           </DialogTitle>
+          <DialogDescription>
+            Shorten a long URL and get a shareable link with analytics.
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={createNewLink}>
-          <div className="space-y-4 py-2">
+        <form onSubmit={createNewLink} noValidate>
+          <div className="space-y-4">
             {formValues.longUrl && (
-              <div className="flex justify-center p-4 bg-muted/30 rounded-lg">
+              <div className="flex flex-col items-center gap-2 rounded-lg bg-muted/40 p-4">
+                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <QrCode className="size-3.5" aria-hidden="true" />
+                  QR code preview
+                </p>
                 <QRCode
                   ref={qrRef}
-                  size={180}
+                  size={160}
                   value={formValues.longUrl}
                   bgColor="#ffffff"
                   fgColor="#1e293b"
@@ -167,58 +172,70 @@ export function CreateLink({ fetchUrls }) {
               </div>
             )}
 
-            <div className="space-y-1">
-              <label htmlFor="title" className="text-sm font-medium">
-                Title <span className="text-red-500">*</span>
-              </label>
+            <div className="space-y-1.5">
+              <Label htmlFor="create-title">
+                Title <span className="text-destructive">*</span>
+              </Label>
               <Input
                 ref={titleRef}
-                id="title"
+                id="create-title"
+                name="title"
                 placeholder="e.g., My Awesome Link"
                 value={formValues.title}
                 onChange={handleChange}
-                className="focus:border-primary transition-colors"
                 disabled={loading}
+                aria-invalid={errors.title ? true : undefined}
+                aria-describedby={errors.title ? "create-title-error" : undefined}
               />
-              {errors.title && <Error message={errors.title} />}
+              <Error id="create-title-error" message={errors.title} />
             </div>
 
-            <div className="space-y-1">
-              <label htmlFor="longUrl" className="text-sm font-medium">
-                Long URL <span className="text-red-500">*</span>
-              </label>
+            <div className="space-y-1.5">
+              <Label htmlFor="create-longUrl">
+                Long URL <span className="text-destructive">*</span>
+              </Label>
               <Input
-                id="longUrl"
+                id="create-longUrl"
+                name="longUrl"
                 placeholder="https://example.com/your-very-long-url"
                 value={formValues.longUrl}
                 onChange={handleChange}
-                className="focus:border-primary transition-colors"
                 disabled={loading}
+                aria-invalid={errors.longUrl ? true : undefined}
+                aria-describedby={
+                  errors.longUrl ? "create-longUrl-error" : undefined
+                }
               />
-              {errors.longUrl && <Error message={errors.longUrl} />}
+              <Error id="create-longUrl-error" message={errors.longUrl} />
             </div>
 
-            <div className="space-y-1">
-              <label htmlFor="customUrl" className="text-sm font-medium">
+            <div className="space-y-1.5">
+              <Label htmlFor="create-customUrl">
                 Custom Slug{" "}
-                <span className="text-muted-foreground text-xs">(optional)</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <Card className="p-2 bg-muted/50 whitespace-nowrap text-sm font-mono">
+                <span className="text-xs font-normal text-muted-foreground">
+                  (optional)
+                </span>
+              </Label>
+              <div className="flex items-stretch gap-2">
+                <div className="flex shrink-0 items-center rounded-lg border bg-muted px-3 font-mono text-sm text-muted-foreground">
                   {import.meta.env.VITE_APP_URL}/
-                </Card>
+                </div>
                 <Input
-                  id="customUrl"
+                  id="create-customUrl"
+                  name="customUrl"
                   placeholder="my-custom-link"
                   value={formValues.customUrl}
                   onChange={handleChange}
-                  className="flex-1 focus:border-primary transition-colors"
                   disabled={loading}
+                  aria-invalid={errors.customUrl ? true : undefined}
+                  aria-describedby={
+                    errors.customUrl ? "create-customUrl-error" : undefined
+                  }
                 />
               </div>
-              {errors.customUrl && <Error message={errors.customUrl} />}
+              <Error id="create-customUrl-error" message={errors.customUrl} />
               {!errors.customUrl && formValues.customUrl && (
-                <p className="text-xs text-muted-foreground">
+                <p className="break-all text-xs text-muted-foreground">
                   Your link will be: {import.meta.env.VITE_APP_URL}/
                   {formValues.customUrl}
                 </p>
@@ -230,18 +247,14 @@ export function CreateLink({ fetchUrls }) {
             )}
           </div>
 
-          <DialogFooter className="sm:justify-start gap-2">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="bg-primary hover:bg-primary/90 min-w-[100px]"
-            >
-              {loading ? <BeatLoader size={8} color="white" /> : "Create Link"}
+          <DialogFooter className="mt-5 gap-2 sm:gap-2">
+            <Button type="submit" disabled={loading} className="min-w-28">
+              {loading ? "Creating..." : "Create Link"}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsOpen(false)}
+              onClick={() => handleDialogOpenChange(false)}
               disabled={loading}
             >
               Cancel

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Error from "./Error";
-import { Input } from "./ui/input";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import * as Yup from "yup";
 import {
   Card,
@@ -9,19 +8,24 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { signup } from "@/db/apiAuth";
-import { BeatLoader } from "react-spinners";
-import { AlertCircle, Eye, EyeOff, User } from "lucide-react";
+import Spinner from "@/components/ui/spinner";
+import Error from "./Error";
+import PasswordInput from "./PasswordInput";
+import { Camera, User, X } from "lucide-react";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
+import { signup } from "@/db/apiAuth";
 import { UrlState } from "@/context/context";
 
 const schema = Yup.object({
   name: Yup.string().required("Name is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  email: Yup.string()
+    .email("Please enter a valid email address")
+    .required("Email is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
@@ -29,16 +33,13 @@ const schema = Yup.object({
 });
 
 const Signup = () => {
-  let [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const longLink = searchParams.get("createNew");
-
   const navigate = useNavigate();
-
   const { fetchUser } = UrlState();
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
   const [redirectToDashboard, setRedirectToDashboard] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [formData, setFormData] = useState({
@@ -56,22 +57,22 @@ const Signup = () => {
 
   useEffect(() => {
     if (redirectToDashboard) {
-      navigate(`/dashboard${longLink ? `?createNew=${longLink}` : ""}`);
+      const params = longLink
+        ? `?createNew=${encodeURIComponent(longLink)}`
+        : "";
+      navigate(`/dashboard${params}`);
     }
   }, [redirectToDashboard, navigate, longLink]);
 
   const { loading, error, fn: fnSignup, data } = useFetch(signup, formData);
 
   useEffect(() => {
-    const handleSuccess = async () => {
-      if (!loading && !error && data) {
-        toast.success("Account created successfully!");
-        await fetchUser();
-        setRedirectToDashboard(true);
-      }
-    };
-
-    handleSuccess();
+    if (!loading && !error && data) {
+      toast.success("Account created successfully!");
+      fetchUser();
+      setRedirectToDashboard(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, error, data]);
 
   const handleInputChange = (e) => {
@@ -81,15 +82,40 @@ const Signup = () => {
       [name]: files ? files[0] : value,
     }));
 
-    if (name === "profile_pic" && files?.[0]) {
-      setPreviewUrl(URL.createObjectURL(files[0]));
+    if (name === "profile_pic") {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(files?.[0] ? URL.createObjectURL(files[0]) : null);
+      if (files?.[0]) {
+        setTouched((prev) => ({ ...prev, profile_pic: true }));
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.profile_pic;
+          return next;
+        });
+      }
+    } else if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
+  };
+
+  const removePhoto = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setFormData((prev) => ({ ...prev, profile_pic: null }));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.profile_pic;
+      return next;
+    });
   };
 
   const handleBlur = async (e) => {
     const { name } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-
     if (name === "profile_pic") return;
 
     try {
@@ -110,8 +136,8 @@ const Signup = () => {
       return null;
     } catch (err) {
       const validationErrors = {};
-      err.inner.forEach((error) => {
-        validationErrors[error.path] = error.message;
+      err.inner.forEach((e) => {
+        validationErrors[e.path] = e.message;
       });
       return validationErrors;
     }
@@ -132,143 +158,198 @@ const Signup = () => {
   };
 
   const showError = (field) => touched[field] && errors[field];
+  const apiError = error?.message || errors.api;
 
   return (
-    <Card className="w-full shadow-xl border-0">
+    <Card className="w-full shadow-xl">
       <CardHeader className="space-y-2 text-center">
-        <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-
+        <CardTitle className="text-2xl font-bold">
+          Create your account
+        </CardTitle>
         <CardDescription>
-          Sign up to start shortening and managing your links.
+          Start shortening and tracking links in seconds.
         </CardDescription>
-
-        {errors.api && (
-          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle size={16} className="shrink-0" />
-            <span>{errors.api}</span>
-          </div>
-        )}
-        {error && (
-          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle size={16} className="shrink-0" />
-            <span>{error.message}</span>
-          </div>
-        )}
       </CardHeader>
 
-      <form onSubmit={handleSignup}>
+      {apiError && (
+        <div className="px-6 pb-2">
+          <Error message={apiError} />
+        </div>
+      )}
+
+      <form onSubmit={handleSignup} noValidate>
         <CardContent className="space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Full Name</label>
-
+            <Label htmlFor="name">Full Name</Label>
             <Input
               ref={nameRef}
+              id="name"
               name="name"
               placeholder="John Doe"
               value={formData.name}
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
+              autoComplete="name"
               aria-invalid={showError("name") || undefined}
+              aria-describedby={
+                showError("name") ? "signup-name-error" : undefined
+              }
             />
-
-            {showError("name") && <Error message={errors.name} />}
+            <Error
+              id="signup-name-error"
+              message={showError("name") ? errors.name : undefined}
+            />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
-
+            <Label htmlFor="email">Email</Label>
             <Input
-              type="email"
+              id="email"
               name="email"
+              type="email"
               placeholder="john@example.com"
               value={formData.email}
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
+              autoComplete="email"
               aria-invalid={showError("email") || undefined}
+              aria-describedby={
+                showError("email") ? "signup-email-error" : undefined
+              }
             />
-
-            {showError("email") && <Error message={errors.email} />}
+            <Error
+              id="signup-email-error"
+              message={showError("email") ? errors.email : undefined}
+            />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Password</label>
-
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                aria-invalid={showError("password") || undefined}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
-                disabled={loading}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            {showError("password") && <Error message={errors.password} />}
+            <Label htmlFor="password">Password</Label>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              disabled={loading}
+              placeholder="At least 6 characters"
+              describedBy="signup-password-hint"
+              invalid={showError("password")}
+            />
+            <p
+              id="signup-password-hint"
+              className="text-xs text-muted-foreground"
+            >
+              Use at least 6 characters. Strong passwords include a mix of
+              letters and numbers.
+            </p>
+            <Error
+              id="signup-password-error"
+              message={showError("password") ? errors.password : undefined}
+            />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Profile Picture</label>
-
-            <div className="flex items-center gap-4">
-              <div className="shrink-0 size-14 rounded-full overflow-hidden border-2 border-muted bg-muted flex items-center justify-center">
+            <Label htmlFor="profile_pic">
+              Profile Picture <span className="text-destructive">*</span>
+            </Label>
+            <div
+              className={`flex items-center gap-4 rounded-lg border-2 border-dashed p-3 transition-colors ${
+                showError("profile_pic")
+                  ? "border-destructive/50 bg-destructive/5"
+                  : "border-border bg-muted/30"
+              }`}
+            >
+              <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-background">
                 {previewUrl ? (
                   <img
                     src={previewUrl}
-                    alt="Preview"
+                    alt="Profile preview"
                     className="size-full object-cover"
                   />
                 ) : (
-                  <User size={20} className="text-muted-foreground" />
+                  <User
+                    className="size-6 text-muted-foreground"
+                    aria-hidden="true"
+                  />
                 )}
               </div>
-
-              <Input
-                type="file"
-                accept="image/*"
-                name="profile_pic"
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                className="flex-1 cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:opacity-90"
-                aria-invalid={showError("profile_pic") || undefined}
-              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium">Choose a photo</p>
+                <p className="text-xs text-muted-foreground">
+                  A photo makes your account easy to recognize.
+                </p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <label
+                    htmlFor="profile_pic"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+                  >
+                    <Camera className="size-3.5" aria-hidden="true" />
+                    {previewUrl ? "Change photo" : "Upload"}
+                  </label>
+                  {previewUrl && (
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="inline-flex items-center gap-1 rounded-md text-xs font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-destructive hover:underline"
+                    >
+                      <X className="size-3.5" aria-hidden="true" />
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-
-            {showError("profile_pic") && <Error message={errors.profile_pic} />}
+            <Input
+              id="profile_pic"
+              name="profile_pic"
+              type="file"
+              accept="image/*"
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              disabled={loading}
+              className="sr-only"
+              aria-invalid={showError("profile_pic") || undefined}
+              aria-describedby={
+                showError("profile_pic") ? "signup-profile-error" : undefined
+              }
+            />
+            <Error
+              id="signup-profile-error"
+              message={
+                showError("profile_pic") ? errors.profile_pic : undefined
+              }
+            />
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-4">
-          <Button
-            className="w-full h-11 text-base"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? <BeatLoader size={8} color="white" /> : "Create Account"}
+        <CardFooter className="flex-col gap-4">
+          <Button className="w-full" type="submit" disabled={loading}>
+            {loading ? (
+              <>
+                <Spinner />
+                Creating account...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </Button>
 
-          <p className="text-sm text-center text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <span
-              className="cursor-pointer text-primary font-medium hover:underline"
-              onClick={() => navigate("/auth?tab=login")}
+            <button
+              type="button"
+              onClick={() =>
+                navigate(
+                  `/auth?tab=login${longLink ? `&createNew=${encodeURIComponent(longLink)}` : ""}`,
+                )
+              }
+              className="font-medium text-primary underline-offset-4 hover:underline"
             >
               Sign in
-            </span>
+            </button>
           </p>
         </CardFooter>
       </form>

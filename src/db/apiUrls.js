@@ -111,7 +111,11 @@ export async function updateUrl(id, updates) {
 
 // delete url
 export async function deleteUrl(id) {
-  const { data, error } = await supabase.from("urls").delete().eq("id", id);
+  const { data, error } = await supabase
+    .from("urls")
+    .delete()
+    .eq("id", id)
+    .select();
 
   if (error) {
     console.error(error);
@@ -123,7 +127,11 @@ export async function deleteUrl(id) {
 
 // bulk delete urls
 export async function deleteUrls(ids) {
-  const { data, error } = await supabase.from("urls").delete().in("id", ids);
+  const { data, error } = await supabase
+    .from("urls")
+    .delete()
+    .in("id", ids)
+    .select();
 
   if (error) {
     console.error(error);

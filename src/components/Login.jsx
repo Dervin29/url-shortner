@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import * as Yup from "yup";
-import { BeatLoader } from "react-spinners";
-
 import {
   Card,
   CardContent,
@@ -14,10 +12,9 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import Spinner from "@/components/ui/spinner";
 import Error from "./Error";
-
+import PasswordInput from "./PasswordInput";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { login } from "@/db/apiAuth";
@@ -25,26 +22,22 @@ import { UrlState } from "@/context/context";
 
 const schema = Yup.object({
   email: Yup.string()
-    .email("Please enter a valid email")
+    .email("Please enter a valid email address")
     .required("Email is required"),
-  password: Yup.string().min(6).required("Password is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
 });
 
 const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const longLink = searchParams.get("createNew");
-
   const { fetchUser } = UrlState();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
   const [redirectToDashboard, setRedirectToDashboard] = useState(false);
 
   const emailRef = useRef(null);
@@ -57,35 +50,37 @@ const Login = () => {
 
   useEffect(() => {
     if (redirectToDashboard) {
-      navigate(`/dashboard${longLink ? `?createNew=${longLink}` : ""}`);
+      const params = longLink
+        ? `?createNew=${encodeURIComponent(longLink)}`
+        : "";
+      navigate(`/dashboard${params}`);
     }
   }, [redirectToDashboard, navigate, longLink]);
 
   useEffect(() => {
-    const handleSuccess = async () => {
-      if (!loading && !error && data) {
-        toast.success("Welcome back!");
-        await fetchUser();
-        setRedirectToDashboard(true);
-      }
-    };
-
-    handleSuccess();
+    if (!loading && !error && data) {
+      toast.success("Welcome back!");
+      fetchUser();
+      setRedirectToDashboard(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, error, data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleBlur = async (e) => {
     const { name } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-
     try {
       await schema.validateAt(name, formData);
       setErrors((prev) => {
@@ -126,35 +121,25 @@ const Login = () => {
   };
 
   const showError = (field) => touched[field] && errors[field];
+  const apiError = error?.message || errors.api;
 
   return (
-    <Card className="w-full shadow-xl border-0">
+    <Card className="w-full shadow-xl">
       <CardHeader className="space-y-2 text-center">
-        <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-
-        <CardDescription>
-          Sign in to continue to your account.
-        </CardDescription>
-
-        {errors.api && (
-          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle size={16} className="shrink-0" />
-            <span>{errors.api}</span>
-          </div>
-        )}
-        {error && (
-          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle size={16} className="shrink-0" />
-            <span>{error.message}</span>
-          </div>
-        )}
+        <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+        <CardDescription>Sign in to continue to your account.</CardDescription>
       </CardHeader>
 
-      <form onSubmit={handleLogin}>
+      {apiError && (
+        <div className="px-6 pb-2">
+          <Error message={apiError} />
+        </div>
+      )}
+
+      <form onSubmit={handleLogin} noValidate>
         <CardContent className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
-
             <Input
               ref={emailRef}
               id="email"
@@ -165,55 +150,66 @@ const Login = () => {
               onChange={handleInputChange}
               onBlur={handleBlur}
               disabled={loading}
+              autoComplete="email"
               aria-invalid={showError("email") || undefined}
+              aria-describedby={
+                showError("email") ? "login-email-error" : undefined
+              }
             />
-
-            {showError("email") && <Error message={errors.email} />}
+            <Error
+              id="login-email-error"
+              message={showError("email") ? errors.email : undefined}
+            />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-
-            <div className="relative">
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                disabled={loading}
-                aria-invalid={showError("password") || undefined}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
-                disabled={loading}
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
             </div>
-
-            {showError("password") && <Error message={errors.password} />}
+            <PasswordInput
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              disabled={loading}
+              describedBy={
+                showError("password") ? "login-password-error" : undefined
+              }
+              invalid={showError("password")}
+            />
+            <Error
+              id="login-password-error"
+              message={showError("password") ? errors.password : undefined}
+            />
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-4">
+        <CardFooter className="flex-col gap-4">
           <Button className="w-full" type="submit" disabled={loading}>
-            {loading ? <BeatLoader size={8} color="white" /> : "Login"}
+            {loading ? (
+              <>
+                <Spinner />
+                Signing in...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </Button>
 
-          <p className="text-sm text-center text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <span
-              className="cursor-pointer text-primary font-medium hover:underline"
-              onClick={() => navigate("/auth?tab=signup")}
+            <button
+              type="button"
+              onClick={() =>
+                navigate(
+                  `/auth?tab=signup${longLink ? `&createNew=${encodeURIComponent(longLink)}` : ""}`,
+                )
+              }
+              className="font-medium text-primary underline-offset-4 hover:underline"
             >
               Create one
-            </span>
+            </button>
           </p>
         </CardFooter>
       </form>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { BarLoader } from "react-spinners";
+import PageLoader from "@/components/PageLoader";
 import { UrlState } from "@/context/context";
 
 function RequireAuth({ children }) {
@@ -9,12 +9,18 @@ function RequireAuth({ children }) {
   const { loading, isAuthenticated } = UrlState();
 
   useEffect(() => {
-    if (!isAuthenticated && loading === false) navigate("/auth");
-  }, [isAuthenticated, loading]);
+    if (!isAuthenticated && loading === false) {
+      navigate("/auth", { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
-  if (loading) return <BarLoader width={"100%"} color="#36d7b7" />;
+  if (loading) {
+    return <PageLoader label="Checking your session..." />;
+  }
 
   if (isAuthenticated) return children;
+
+  return null;
 }
 
 export default RequireAuth;

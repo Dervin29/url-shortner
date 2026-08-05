@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -49,40 +49,46 @@ const LandingPage = () => {
   return (
     <div className="flex flex-col items-center">
       {/* Hero */}
-      <section className="flex flex-col items-center gap-6 py-16 sm:py-24 text-center max-w-3xl">
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight">
+      <section className="flex flex-col items-center gap-6 py-16 text-center sm:py-24">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+          Free forever · No credit card required
+        </span>
+
+        <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
           Shorten URLs.
           <br />
-          <span className="text-blue-500">Track everything.</span>
+          <span className="text-primary">Track everything.</span>
         </h1>
-        <p className="text-lg sm:text-xl text-muted-foreground max-w-xl">
+
+        <p className="max-w-xl text-lg text-muted-foreground sm:text-xl">
           Trimrr turns long URLs into short, powerful links. Get real-time
           analytics, custom aliases, and QR codes — all in one place.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
           {isAuthenticated ? (
             <Button
               size="lg"
-              className="text-base h-12 px-8"
+              className="gap-2 text-base"
               onClick={() => navigate("/dashboard")}
             >
-              <Zap size={18} />
+              <Zap className="size-5" aria-hidden="true" />
               Go to Dashboard
             </Button>
           ) : (
             <>
               <Button
                 size="lg"
-                className="text-base h-12 px-8"
+                className="gap-2 text-base"
                 onClick={() => navigate("/auth?tab=signup")}
               >
-                <Zap size={18} />
+                <Zap className="size-5" aria-hidden="true" />
                 Get Started Free
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="text-base h-12 px-8"
+                className="text-base"
                 onClick={() => navigate("/auth?tab=login")}
               >
                 Sign In
@@ -94,21 +100,24 @@ const LandingPage = () => {
 
       {/* Features */}
       <section className="w-full py-16 sm:py-20">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
+        <h2 className="mb-4 text-center text-3xl font-bold tracking-tight sm:text-4xl">
           Everything you need
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <p className="mx-auto mb-12 max-w-md text-center text-muted-foreground">
+          One tool to shorten, share, and understand every link you create.
+        </p>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map((feature) => {
             const Icon = feature.icon;
             return (
               <div
                 key={feature.title}
-                className="flex flex-col items-center text-center gap-3 rounded-xl border bg-card p-6 transition-colors hover:border-blue-500/40"
+                className="flex flex-col items-center gap-3 rounded-xl border bg-card p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
               >
-                <div className="flex size-12 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
-                  <Icon size={24} />
+                <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Icon className="size-6" aria-hidden="true" />
                 </div>
-                <h3 className="font-semibold text-lg">{feature.title}</h3>
+                <h3 className="text-lg font-semibold">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {feature.description}
                 </p>
@@ -121,17 +130,17 @@ const LandingPage = () => {
       {/* CTA Banner */}
       {!isAuthenticated && (
         <section className="w-full py-16 sm:py-20">
-          <div className="rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border p-8 sm:p-12 text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+          <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-8 text-center sm:p-12">
+            <h2 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl">
               Ready to simplify your links?
             </h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+            <p className="mx-auto mb-6 max-w-md text-muted-foreground">
               Join thousands of users who trust Trimrr to manage, track, and
               optimize their links.
             </p>
             <Button
               size="lg"
-              className="text-base h-12 px-8"
+              className="text-base"
               onClick={() => navigate("/auth?tab=signup")}
             >
               Create Your Free Account
@@ -142,10 +151,14 @@ const LandingPage = () => {
 
       {/* FAQ */}
       <section className="w-full py-16 sm:py-20">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
+        <h2 className="mb-12 text-center text-3xl font-bold tracking-tight sm:text-4xl">
           Frequently asked questions
         </h2>
-        <Accordion type="multiple" collapsible className="w-full max-w-2xl mx-auto">
+        <Accordion
+          type="multiple"
+          collapsible
+          className="mx-auto w-full max-w-2xl"
+        >
           <AccordionItem value="item-1">
             <AccordionTrigger>
               How does the Trimrr URL shortener work?

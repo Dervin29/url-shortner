@@ -1,5 +1,20 @@
 import { UAParser } from "ua-parser-js";
 import { supabase } from "./supabase";
+import { createRateLimiter } from "@/lib/rateLimit";
+
+// Public redirect writes a `clicks` row + calls ipapi.co on every hit, so it
+// is the most abuse-prone surface. Guard it client-side: dedupe the same URL
+// (refresh/preview spam) and cap total recordings per browser.
+const urlClickLimiter = createRateLimiter({
+  limit: 1,
+  windowMs: 30_000,
+  persist: true,
+});
+const sessionClickLimiter = createRateLimiter({
+  limit: 6,
+  windowMs: 60_000,
+  persist: true,
+});
 
 // export async function getClicks() {
 //   let {data, error} = await supabase.from("clicks").select("*");
@@ -44,6 +59,13 @@ const parser = new UAParser();
 
 export const storeClicks = async ({ id, originalUrl }) => {
   try {
+    const urlCheck = urlClickLimiter(`click:${id}`);
+    const sessionCheck = sessionClickLimiter("clicks");
+    if (!urlCheck.allowed || !sessionCheck.allowed) {
+      // Rate-limited: still redirect, just don't record this visit.
+      return;
+    }
+
     const res = parser.getResult();
 
     const device = res.type || "desktop";

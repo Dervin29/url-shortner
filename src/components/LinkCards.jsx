@@ -69,10 +69,10 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
   return (
     <article
       className={cn(
-        "group flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
+        "group flex flex-wrap items-center gap-4 rounded-2xl border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
         selected
-          ? "border-primary/50 bg-primary/5 shadow-sm"
-          : "border-border hover:border-primary/30 hover:shadow-md",
+          ? "border-primary/50 bg-primary/5 shadow-card"
+          : "border-border hover:border-primary/30 hover:shadow-card-hover",
       )}
     >
       {/* Selection checkbox */}
@@ -143,7 +143,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           {url?.original_url}
         </p>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Calendar className="size-3.5" aria-hidden="true" />
             <time dateTime={url?.created_at}>{createdDate}</time>

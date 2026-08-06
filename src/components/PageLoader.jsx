@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Scissors } from "lucide-react";
 
 const PageLoader = ({ label = "Loading...", className }) => {
   return (
@@ -6,16 +7,27 @@ const PageLoader = ({ label = "Loading...", className }) => {
       role="status"
       aria-live="polite"
       className={cn(
-        "flex min-h-[40vh] w-full flex-col items-center justify-center gap-4",
+        "mx-auto flex min-h-[40vh] w-full max-w-3xl flex-col items-center gap-8 py-12",
         className,
       )}
     >
-      <div className="relative flex size-12 items-center justify-center">
-        <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-        <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-primary" />
-        <span className="sr-only">{label}</span>
+      <span className="flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-card">
+        <Scissors className="size-5" aria-hidden="true" />
+      </span>
+      <div className="w-full space-y-4">
+        <div className="skeleton-shimmer h-4 w-40 rounded-full" />
+        <div className="skeleton-shimmer h-10 w-3/4 rounded-xl" />
+        <div className="skeleton-shimmer h-4 w-1/2 rounded-full" />
+        <div className="skeleton-shimmer mt-8 h-28 rounded-2xl" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="skeleton-shimmer h-24 rounded-2xl" />
+          <div className="skeleton-shimmer h-24 rounded-2xl" />
+          <div className="skeleton-shimmer h-24 rounded-2xl" />
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
     </div>
   );
 };

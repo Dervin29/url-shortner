@@ -117,7 +117,7 @@ const Login = () => {
   const apiError = error?.message || errors.api;
 
   return (
-    <Card className="w-full shadow-xl">
+    <Card className="w-full border-border/70">
       <CardHeader className="space-y-2 text-center">
         <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
         <CardDescription>Sign in to continue to your account.</CardDescription>

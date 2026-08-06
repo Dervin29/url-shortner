@@ -36,14 +36,14 @@ const AppLayout = () => {
         className="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8"
       >
         <div key={pathname} className="page-enter mt-2">
-          <div className="mx-auto w-full max-w-6xl">
+          <div className="mx-auto w-full max-w-7xl">
             <Outlet />
           </div>
         </div>
       </main>
 
-      <footer className="border-t bg-muted/30">
-        <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+      <footer className="border-t bg-card/50">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-center text-sm text-muted-foreground sm:px-6 lg:px-8">
           <p>
             Built by{" "}
             <span className="font-semibold text-foreground">Alan Derwin</span>{" "}

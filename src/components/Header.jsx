@@ -63,7 +63,7 @@ const Header = () => {
             className="flex items-center gap-2 font-bold text-lg tracking-tight transition-opacity hover:opacity-80"
             aria-label="Trimrr home"
           >
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <span className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-card">
               <Scissors className="size-4" aria-hidden="true" />
             </span>
             <span className="hidden sm:inline">Trimrr</span>

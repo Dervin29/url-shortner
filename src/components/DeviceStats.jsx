@@ -9,8 +9,8 @@ import {
 import { MonitorSmartphone } from "lucide-react";
 import { useTheme } from "@/context/theme";
 
-const LIGHT_COLORS = ["#2563EB", "#10B981", "#F59E0B", "#8B5CF6", "#06B6D4"];
-const DARK_COLORS = ["#60A5FA", "#34D399", "#FBBF24", "#A78BFA", "#22D3EE"];
+const LIGHT_COLORS = ["#3B82F6", "#2563EB", "#60A5FA", "#93C5FD", "#1D4ED8"];
+const DARK_COLORS = ["#60A5FA", "#3B82F6", "#93C5FD", "#BFDBFE", "#2563EB"];
 
 export default function DeviceStats({ stats = [] }) {
   const { theme } = useTheme();

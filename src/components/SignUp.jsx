@@ -152,7 +152,7 @@ const Signup = () => {
   const apiError = error?.message || errors.api;
 
   return (
-    <Card className="w-full shadow-xl">
+    <Card className="w-full border-border/70">
       <CardHeader className="space-y-2 text-center">
         <CardTitle className="text-2xl font-bold">
           Create your account

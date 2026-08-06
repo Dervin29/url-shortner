@@ -50,27 +50,23 @@ const SORT_OPTIONS = [
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 
-const StatCard = ({ icon: Icon, label, value, loading, hint, accent }) => (
-  <Card className="border-border/70 shadow-sm transition-shadow hover:shadow-md">
+const StatCard = ({ icon: Icon, label, value, loading, hint }) => (
+  <Card className="border-border/70 transition-all hover:shadow-card-hover">
     <CardHeader className="flex flex-row items-center justify-between pb-2">
       <CardTitle className="text-sm font-medium text-muted-foreground">
         {label}
       </CardTitle>
-      <div
-        className={`flex size-9 items-center justify-center rounded-lg ${
-          accent === "blue"
-            ? "bg-primary/10 text-primary"
-            : "bg-emerald-500/10 text-emerald-500"
-        }`}
-      >
+      <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
         <Icon className="size-4" aria-hidden="true" />
       </div>
     </CardHeader>
     <CardContent>
       {loading ? (
-        <Skeleton className="h-8 w-20" />
+        <Skeleton className="h-8 w-24" />
       ) : (
-        <p className="text-3xl font-bold tracking-tight">{value}</p>
+        <p className="font-mono text-3xl font-semibold tracking-tight">
+          {value}
+        </p>
       )}
       <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
     </CardContent>
@@ -78,7 +74,7 @@ const StatCard = ({ icon: Icon, label, value, loading, hint, accent }) => (
 );
 
 const LinkCardSkeleton = () => (
-  <div className="flex items-center gap-4 rounded-xl border p-4 sm:p-5">
+  <div className="flex items-center gap-4 rounded-2xl border p-4 sm:p-5">
     <Skeleton className="size-5 shrink-0 rounded" />
     <Skeleton className="hidden size-20 shrink-0 rounded-lg sm:block sm:size-24" />
     <div className="flex-1 space-y-2.5">
@@ -262,7 +258,7 @@ const Dashboard = () => {
           </div>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center gap-4 rounded-xl border border-destructive/20 bg-destructive/5 px-6 py-12 text-center">
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 px-6 py-12 text-center">
           <Error message={error.message || "Failed to load your links"} />
           <Button variant="outline" onClick={() => fnUrls()}>
             Try again
@@ -282,7 +278,6 @@ const Dashboard = () => {
                   ? "No links yet"
                   : `${urls?.length} link${urls?.length > 1 ? "s" : ""} created`
               }
-              accent="blue"
             />
             <StatCard
               icon={MousePointerClick}
@@ -296,7 +291,6 @@ const Dashboard = () => {
                       totalClicks > 1 ? "s" : ""
                     }`
               }
-              accent="green"
             />
           </div>
 
@@ -354,7 +348,7 @@ const Dashboard = () => {
 
           {/* Bulk Actions Toolbar */}
           {selectedIds.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-primary/5 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-primary/5 px-3 py-2">
               <label className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="checkbox"
@@ -468,15 +462,20 @@ const Dashboard = () => {
           {/* Link list */}
           {visibleUrls.length > 0 && (
             <div className="flex flex-col gap-3">
-              {paginatedUrls.map((url) => (
-                <LinkCards
+              {paginatedUrls.map((url, index) => (
+                <div
                   key={url.id}
-                  url={url}
-                  clickCount={clicksByUrl[url.id] || 0}
-                  fetchUrls={fnUrls}
-                  selected={selectedIds.includes(url.id)}
-                  onToggle={toggleSelect}
-                />
+                  className="stagger-item"
+                  style={{ "--i": index }}
+                >
+                  <LinkCards
+                    url={url}
+                    clickCount={clicksByUrl[url.id] || 0}
+                    fetchUrls={fnUrls}
+                    selected={selectedIds.includes(url.id)}
+                    onToggle={toggleSelect}
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -486,12 +485,12 @@ const Dashboard = () => {
             <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row sm:justify-between">
               <p className="text-sm text-muted-foreground">
                 Showing{" "}
-                <span className="font-medium text-foreground">
+                <span className="font-mono font-medium text-foreground">
                   {(safePage - 1) * ITEMS_PER_PAGE + 1}-
                   {Math.min(safePage * ITEMS_PER_PAGE, visibleUrls.length)}
                 </span>{" "}
                 of{" "}
-                <span className="font-medium text-foreground">
+                <span className="font-mono font-medium text-foreground">
                   {visibleUrls.length}
                 </span>{" "}
                 link{visibleUrls.length > 1 ? "s" : ""}
@@ -516,7 +515,7 @@ const Dashboard = () => {
                       key={page}
                       variant={page === safePage ? "default" : "outline"}
                       size="icon-sm"
-                      className="size-9"
+                      className="size-9 font-mono"
                       aria-current={page === safePage ? "page" : undefined}
                       onClick={() => setCurrentPage(page)}
                     >

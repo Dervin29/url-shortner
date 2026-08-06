@@ -11,7 +11,7 @@ const EmptyState = ({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted px-6 py-14 text-center",
+        "flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-muted px-6 py-14 text-center",
         className,
       )}
     >

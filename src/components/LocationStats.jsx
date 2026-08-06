@@ -12,7 +12,7 @@ import { useTheme } from "@/context/theme";
 
 export default function LocationStats({ stats = [] }) {
   const { theme } = useTheme();
-  const stroke = theme === "dark" ? "#60A5FA" : "#2563EB";
+  const stroke = theme === "dark" ? "#60A5FA" : "#3B82F6";
 
   const cityCount = stats.reduce((acc, item) => {
     const city = item.city || "Unknown";

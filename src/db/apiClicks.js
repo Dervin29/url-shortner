@@ -1,33 +1,38 @@
 import { UAParser } from "ua-parser-js";
 import { supabase } from "./supabase";
-import { createRateLimiter } from "@/lib/rateLimit";
+import { createRateLimiter, getClientKey, retryHint } from "@/lib/rateLimit";
+import { rateLimitConfig } from "@/config/rateLimits";
 
 // Public redirect writes a `clicks` row + calls ipapi.co on every hit, so it
 // is the most abuse-prone surface. Guard it client-side: dedupe the same URL
-// (refresh/preview spam) and cap total recordings per browser.
+// (refresh/preview spam) and cap total recordings per browser. Thresholds come
+// from rateLimitConfig.
 const urlClickLimiter = createRateLimiter({
-  limit: 1,
-  windowMs: 30_000,
+  ...rateLimitConfig.clicks.perUrl,
   persist: true,
 });
 const sessionClickLimiter = createRateLimiter({
-  limit: 6,
-  windowMs: 60_000,
+  ...rateLimitConfig.clicks.perSession,
   persist: true,
 });
 
-// export async function getClicks() {
-//   let {data, error} = await supabase.from("clicks").select("*");
+// Authenticated analytics reads get loose per-user limits.
+const userLimiter = createRateLimiter({
+  ...rateLimitConfig.user,
+  persist: true,
+});
 
-//   if (error) {
-//     console.error(error);
-//     throw new Error("Unable to load Stats");
-//   }
+const guard = (check) => {
+  if (!check.allowed) {
+    throw new Error(`Too many requests.${retryHint(check.retryAfterMs)}`);
+  }
+};
 
-//   return data;
-// }
+const scope = (user_id) => user_id || getClientKey();
 
 export async function getClicksForUrls(urlIds) {
+  guard(userLimiter(`clicks:list:${scope()}`));
+
   const { data, error } = await supabase
     .from("clicks")
     .select("*")
@@ -42,6 +47,8 @@ export async function getClicksForUrls(urlIds) {
 }
 
 export async function getClicksForUrl(url_id) {
+  guard(userLimiter(`clicks:get:${scope()}`));
+
   const { data, error } = await supabase
     .from("clicks")
     .select("*")

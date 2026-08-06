@@ -90,6 +90,7 @@ const EditLinkForm = ({ url, loading, error, onSave, onCancel }) => {
             placeholder="e.g., My Awesome Link"
             value={formValues.title}
             onChange={handleChange}
+            onClick={(e) => e.target.select()}
             disabled={loading}
             aria-invalid={errors.title ? true : undefined}
             aria-describedby={errors.title ? "edit-title-error" : undefined}
@@ -107,6 +108,7 @@ const EditLinkForm = ({ url, loading, error, onSave, onCancel }) => {
             placeholder="https://example.com/your-very-long-url"
             value={formValues.longUrl}
             onChange={handleChange}
+            onClick={(e) => e.target.select()}
             disabled={loading}
             aria-invalid={errors.longUrl ? true : undefined}
             aria-describedby={errors.longUrl ? "edit-longUrl-error" : undefined}
@@ -131,6 +133,7 @@ const EditLinkForm = ({ url, loading, error, onSave, onCancel }) => {
               placeholder="my-custom-link"
               value={formValues.customUrl}
               onChange={handleChange}
+              onClick={(e) => e.target.select()}
               disabled={loading}
               aria-invalid={errors.customUrl ? true : undefined}
               aria-describedby={

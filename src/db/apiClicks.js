@@ -2,7 +2,7 @@ import { UAParser } from "ua-parser-js";
 import { supabase } from "./supabase";
 import { createRateLimiter, getClientKey, retryHint } from "@/lib/rateLimit";
 import { rateLimitConfig } from "@/config/rateLimits";
-import { assertValid, clickRecordSchema, urlIdArraySchema, urlIdSchema } from "@/lib/validation";
+import { assertValid, clickRecordSchema, longUrlSchema, urlIdArraySchema, urlIdSchema } from "@/lib/validation";
 
 // Public redirect writes a `clicks` row + calls ipapi.co on every hit, so it
 // is the most abuse-prone surface. Guard it client-side: dedupe the same URL
@@ -70,6 +70,11 @@ export async function getClicksForUrl(url_id) {
 const parser = new UAParser();
 
 export const storeClicks = async ({ id, originalUrl }) => {
+  // Defense in depth: never navigate anywhere that is not http(s). This runs
+  // before the try/finally below, so an invalid URL throws here and the
+  // finally redirect (which used to navigate to the raw URL) never fires.
+  const safeUrl = longUrlSchema.validateSync(originalUrl);
+
   try {
     assertValid(clickRecordSchema, { id, originalUrl }, "Invalid click payload");
 
@@ -108,6 +113,6 @@ export const storeClicks = async ({ id, originalUrl }) => {
   } catch (err) {
     console.error(err);
   } finally {
-    window.location.href = originalUrl;
+    window.location.href = safeUrl;
   }
 };

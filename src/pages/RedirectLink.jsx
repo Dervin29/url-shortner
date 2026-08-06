@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { storeClicks } from "@/db/apiClicks";
 import { getLongUrl } from "@/db/apiUrls";
-import { slugSchema } from "@/lib/validation";
+import { longUrlSchema, slugSchema } from "@/lib/validation";
 import useFetch from "@/hooks/useFetch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,18 @@ const RedirectLink = () => {
     id: data?.id,
     originalUrl: data?.original_url,
   });
+
+  // Never trust the value returned by the database. Reuse the same schema used
+  // at creation time: a proper URL() parse that only accepts http/https. If bad
+  // data somehow exists, safeUrl is null and we refuse to navigate anywhere.
+  let safeUrl = null;
+  if (data?.original_url) {
+    try {
+      safeUrl = longUrlSchema.validateSync(data.original_url);
+    } catch {
+      safeUrl = null;
+    }
+  }
 
   // Fetch the URL data
   useEffect(() => {
@@ -41,9 +53,19 @@ const RedirectLink = () => {
     return () => window.clearTimeout(timer);
   }, [error, navigate]);
 
+  // Handle fetched data that is not a valid http(s) URL
+  useEffect(() => {
+    if (loading || !data || safeUrl) return undefined;
+    toast.error("This link is invalid or has been removed");
+    const timer = window.setTimeout(() => {
+      navigate("/");
+    }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [loading, data, safeUrl, navigate]);
+
   // Handle successful fetch and redirect
   useEffect(() => {
-    if (loading || !data?.original_url) return undefined;
+    if (loading || !safeUrl) return undefined;
 
     fnStoreClicks();
 
@@ -58,7 +80,7 @@ const RedirectLink = () => {
     }, 1000);
 
     const redirectTimer = window.setTimeout(() => {
-      window.location.replace(data.original_url);
+      window.location.replace(safeUrl);
     }, 3000);
 
     return () => {
@@ -66,7 +88,7 @@ const RedirectLink = () => {
       window.clearTimeout(redirectTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, data]);
+  }, [loading, safeUrl]);
 
   if (error && !loading) {
     return (
@@ -97,7 +119,7 @@ const RedirectLink = () => {
     );
   }
 
-  const isReady = !loading && data?.original_url;
+  const isReady = !loading && safeUrl;
 
   return (
     <div className="flex min-h-[50vh] items-center justify-center px-4">
@@ -142,18 +164,18 @@ const RedirectLink = () => {
           </div>
 
           {/* Destination URL */}
-          {data?.original_url && (
+          {safeUrl && (
             <div className="w-full rounded-lg border bg-muted/40 p-4">
               <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
                 Destination
               </p>
               <a
-                href={data.original_url}
+                href={safeUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 break-all text-sm font-medium text-primary hover:underline"
               >
-                <span className="truncate">{data.original_url}</span>
+                <span className="truncate">{safeUrl}</span>
                 <ExternalLink className="size-4 shrink-0" aria-hidden="true" />
               </a>
             </div>
@@ -161,9 +183,9 @@ const RedirectLink = () => {
 
           <p className="text-xs text-muted-foreground">
             If you're not redirected automatically,{" "}
-            {data?.original_url ? (
+            {safeUrl ? (
               <a
-                href={data.original_url}
+                href={safeUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="font-medium text-primary hover:underline"

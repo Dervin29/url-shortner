@@ -2,6 +2,7 @@ import { UAParser } from "ua-parser-js";
 import { supabase } from "./supabase";
 import { createRateLimiter, getClientKey, retryHint } from "@/lib/rateLimit";
 import { rateLimitConfig } from "@/config/rateLimits";
+import { assertValid, clickRecordSchema, urlIdArraySchema, urlIdSchema } from "@/lib/validation";
 
 // Public redirect writes a `clicks` row + calls ipapi.co on every hit, so it
 // is the most abuse-prone surface. Guard it client-side: dedupe the same URL
@@ -31,6 +32,8 @@ const guard = (check) => {
 const scope = (user_id) => user_id || getClientKey();
 
 export async function getClicksForUrls(urlIds) {
+  assertValid(urlIdArraySchema, urlIds, "Unable to load Stats");
+
   guard(userLimiter(`clicks:list:${scope()}`));
 
   const { data, error } = await supabase
@@ -47,6 +50,8 @@ export async function getClicksForUrls(urlIds) {
 }
 
 export async function getClicksForUrl(url_id) {
+  assertValid(urlIdSchema, url_id, "Unable to load Stats");
+
   guard(userLimiter(`clicks:get:${scope()}`));
 
   const { data, error } = await supabase
@@ -66,6 +71,8 @@ const parser = new UAParser();
 
 export const storeClicks = async ({ id, originalUrl }) => {
   try {
+    assertValid(clickRecordSchema, { id, originalUrl }, "Invalid click payload");
+
     const urlCheck = urlClickLimiter(`click:${id}`);
     const sessionCheck = sessionClickLimiter("clicks");
     if (!urlCheck.allowed || !sessionCheck.allowed) {

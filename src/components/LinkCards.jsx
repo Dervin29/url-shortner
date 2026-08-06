@@ -88,7 +88,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
 
       {/* QR code */}
       <Link
-        to={`/link/${url?.id}`}
+        to={`/link/${url?.custom_url || url?.short_url}`}
         className="shrink-0"
         aria-label={`View stats for ${url?.title || "link"}`}
       >
@@ -103,7 +103,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
       {/* Content */}
       <div className="min-w-0 flex-1 basis-56">
         <Link
-          to={`/link/${url?.id}`}
+          to={`/link/${url?.custom_url || url?.short_url}`}
           className="group/link block"
           aria-label={`View stats for ${url?.title || "link"}`}
         >

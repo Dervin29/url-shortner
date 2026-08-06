@@ -42,7 +42,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { UrlState } from "@/context/context";
 import { getClicksForUrl } from "@/db/apiClicks";
-import { deleteUrl, getUrl } from "@/db/apiUrls";
+import { deleteUrl, getUrlBySlug } from "@/db/apiUrls";
 import useFetch from "@/hooks/useFetch";
 import DeviceStats from "@/components/DeviceStats";
 import LocationStats from "@/components/LocationStats";
@@ -52,16 +52,14 @@ import { useTheme } from "@/context/theme";
 
 const LinkPage = () => {
   const navigate = useNavigate();
-  const { user, loading: userLoading } = UrlState();
+  const { user } = UrlState();
   const { theme } = useTheme();
-  const { id } = useParams();
+  const { slug } = useParams();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  const [hasRequestedUrl, setHasRequestedUrl] = useState(false);
-
-  const { loading, data: url, fn: fnGetUrl, error } = useFetch(getUrl, {
-    id,
+  const { loading, data: url, fn: fnGetUrl, error } = useFetch(getUrlBySlug, {
+    slug,
     user_id: user?.id,
   });
 
@@ -70,17 +68,16 @@ const LinkPage = () => {
     data: stats,
     fn: fnStats,
     error: statsError,
-  } = useFetch(getClicksForUrl, id);
+  } = useFetch(getClicksForUrl, url?.id);
 
   useEffect(() => {
-    if (user?.id && id && !hasRequestedUrl) {
-      setHasRequestedUrl(true);
+    if (user?.id && slug) {
       fnGetUrl();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, id, hasRequestedUrl]);
+  }, [user?.id, slug]);
 
-  const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, id);
+  const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, url?.id);
 
   const refreshStats = () => fnStats();
 

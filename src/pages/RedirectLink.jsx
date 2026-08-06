@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { storeClicks } from "@/db/apiClicks";
 import { getLongUrl } from "@/db/apiUrls";
+import { slugSchema } from "@/lib/validation";
 import useFetch from "@/hooks/useFetch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ const RedirectLink = () => {
 
   // Fetch the URL data
   useEffect(() => {
-    if (id) {
+    if (id && slugSchema.isValidSync(id)) {
       fnGetUrl();
     } else {
       toast.error("Invalid link");

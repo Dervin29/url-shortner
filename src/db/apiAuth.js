@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
 import { createRateLimiter, getClientKey, retryHint } from "@/lib/rateLimit";
 import { rateLimitConfig } from "@/config/rateLimits";
+import { assertValid, loginSchema, resetPasswordSchema, signupSchema } from "@/lib/validation";
 
 // Guard against repeated failed attempts / signup spam. Supabase enforces its
 // own server-side limits too; this is a client-side UX + abuse guard. Auth
@@ -45,6 +46,8 @@ const checkAuthRate = (limiters, route, email) => {
 };
 
 export async function login({ email, password }) {
+  assertValid(loginSchema, { email, password }, "Unable to sign in");
+
   checkAuthRate(loginLimiters, "login", email);
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -65,6 +68,8 @@ export async function getCurrentUser() {
 }
 
 export async function signup({ name, email, password, profile_pic }) {
+  assertValid(signupSchema, { name, email, password, profile_pic }, "Unable to create account");
+
   checkAuthRate(signupLimiters, "signup", email);
 
   const filename = `dp-${name.split(" ").join("-")}-${Math.random()}`;
@@ -92,6 +97,8 @@ export async function signup({ name, email, password, profile_pic }) {
 }
 
 export async function resetPassword({ email }) {
+  assertValid(resetPasswordSchema, { email }, "Unable to send password reset");
+
   checkAuthRate(resetLimiters, "reset", email);
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {

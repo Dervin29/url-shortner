@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import * as yup from "yup";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,23 +14,11 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { updateUrl } from "@/db/apiUrls";
+import { urlFormSchema } from "@/lib/validation";
 import Error from "./Error";
 import useFetch from "@/hooks/useFetch";
 
-const schema = yup.object().shape({
-  title: yup.string().required("Title is required"),
-  longUrl: yup
-    .string()
-    .url("Please enter a valid URL (include http:// or https://)")
-    .required("Long URL is required"),
-  customUrl: yup
-    .string()
-    .transform((value) => (value === "" ? undefined : value))
-    .matches(
-      /^[a-zA-Z0-9-_]+$/,
-      "Only letters, numbers, hyphens, and underscores allowed",
-    ),
-});
+const schema = urlFormSchema;
 
 const EditLinkForm = ({ url, loading, error, onSave, onCancel }) => {
   const [errors, setErrors] = useState({});

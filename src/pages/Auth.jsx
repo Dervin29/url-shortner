@@ -7,7 +7,7 @@ import Signup from "@/components/SignUp";
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const tab = searchParams.get("tab") || "login";
+  const tab = searchParams.get("tab") === "signup" ? "signup" : "login";
   const longLink = searchParams.get("createNew");
 
   const switchTab = (value) => {

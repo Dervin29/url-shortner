@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import * as Yup from "yup";
 import {
   Card,
   CardContent,
@@ -18,16 +17,10 @@ import PasswordInput from "./PasswordInput";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { login } from "@/db/apiAuth";
+import { loginSchema } from "@/lib/validation";
 import { UrlState } from "@/context/context";
 
-const schema = Yup.object({
-  email: Yup.string()
-    .email("Please enter a valid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
+const schema = loginSchema;
 
 const Login = () => {
   const navigate = useNavigate();

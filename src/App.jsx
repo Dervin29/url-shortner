@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/link/:id",
+        path: "/link/:slug",
         element: (
           <AuthGuard>
             <LinkPage />

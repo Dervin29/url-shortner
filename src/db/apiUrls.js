@@ -1,6 +1,15 @@
 import { supabase } from "./supabase";
 import { createRateLimiter, getClientKey, retryHint } from "@/lib/rateLimit";
 import { rateLimitConfig } from "@/config/rateLimits";
+import {
+  assertValid,
+  createUrlSchema,
+  slugSchema,
+  updateUrlSchema,
+  urlIdArraySchema,
+  urlIdSchema,
+  uuidSchema,
+} from "@/lib/validation";
 
 // Rate-limit tiers: public reads (short-link redirect) get moderate limits;
 // authenticated CRUD actions get loose per-user limits. Thresholds come from
@@ -26,6 +35,8 @@ const scope = (user_id) => user_id || getClientKey();
 
 // get all urls
 export async function getUrls(user_id) {
+  assertValid(uuidSchema, user_id, "Unable to load URLs");
+
   guard(userLimiter(`urls:list:${scope(user_id)}`));
 
   let { data, error } = await supabase
@@ -43,6 +54,9 @@ export async function getUrls(user_id) {
 
 // get single url
 export async function getUrl({ id, user_id }) {
+  assertValid(urlIdSchema, id, "Short Url not found");
+  assertValid(uuidSchema, user_id, "Short Url not found");
+
   guard(userLimiter(`urls:get:${scope(user_id)}`));
 
   const { data, error } = await supabase
@@ -60,8 +74,33 @@ export async function getUrl({ id, user_id }) {
   return data;
 }
 
+// get single url by its public slug (short_url or custom_url). Keeps the
+// internal DB id out of the URL while staying user-scoped.
+export async function getUrlBySlug({ slug, user_id }) {
+  assertValid(slugSchema, slug, "Short Url not found");
+  assertValid(uuidSchema, user_id, "Short Url not found");
+
+  guard(userLimiter(`urls:get:${scope(user_id)}`));
+
+  const { data, error } = await supabase
+    .from("urls")
+    .select("*")
+    .or(`short_url.eq.${slug},custom_url.eq.${slug}`)
+    .eq("user_id", user_id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Short Url not found");
+  }
+
+  return data;
+}
+
 // get long url
 export async function getLongUrl(id) {
+  assertValid(slugSchema, id, "Invalid link");
+
   guard(publicLimiter(`redirect:${getClientKey()}`));
 
   let { data: shortLinkData, error: shortLinkError } = await supabase
@@ -83,6 +122,11 @@ export async function createUrl(
   { title, longUrl, customUrl, user_id },
   qrcode,
 ) {
+  assertValid(createUrlSchema, { title, longUrl, customUrl, user_id }, "Error creating short URL");
+  if (qrcode != null && !(qrcode instanceof Blob)) {
+    throw new Error("QR code could not be generated. Please try again.");
+  }
+
   guard(userLimiter(`urls:create:${scope(user_id)}`));
 
   const short_url = Math.random().toString(36).substr(2, 6);
@@ -127,6 +171,9 @@ export async function createUrl(
 
 // update url
 export async function updateUrl(id, updates) {
+  assertValid(urlIdSchema, id, "Unable to update URL");
+  assertValid(updateUrlSchema, updates, "Unable to update URL");
+
   guard(userLimiter(`urls:update:${scope()}`));
 
   const { data, error } = await supabase
@@ -145,6 +192,8 @@ export async function updateUrl(id, updates) {
 
 // delete url
 export async function deleteUrl(id) {
+  assertValid(urlIdSchema, id, "Unable to delete Url");
+
   guard(userLimiter(`urls:delete:${scope()}`));
 
   const { data, error } = await supabase
@@ -163,6 +212,8 @@ export async function deleteUrl(id) {
 
 // bulk delete urls
 export async function deleteUrls(ids) {
+  assertValid(urlIdArraySchema, ids, "Unable to delete selected URLs");
+
   guard(userLimiter(`urls:bulk-delete:${scope()}`));
 
   const { data, error } = await supabase

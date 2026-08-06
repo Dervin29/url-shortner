@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import * as yup from "yup";
 import { toast } from "sonner";
 import { Plus, QrCode, Sparkles } from "lucide-react";
 import { QRCode } from "react-qrcode-logo";
@@ -17,24 +16,12 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { createUrl } from "@/db/apiUrls";
+import { urlFormSchema } from "@/lib/validation";
 import Error from "./Error";
 import useFetch from "@/hooks/useFetch";
 import { UrlState } from "@/context/context";
 
-const schema = yup.object().shape({
-  title: yup.string().required("Title is required"),
-  longUrl: yup
-    .string()
-    .url("Please enter a valid URL (include http:// or https://)")
-    .required("Long URL is required"),
-  customUrl: yup
-    .string()
-    .transform((value) => (value === "" ? undefined : value))
-    .matches(
-      /^[a-zA-Z0-9-_]+$/,
-      "Only letters, numbers, hyphens, and underscores allowed",
-    ),
-});
+const schema = urlFormSchema;
 
 const emptyForm = { title: "", longUrl: "", customUrl: "" };
 

@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/context/theme";
 
@@ -11,14 +11,16 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative rounded-full"
+      className="relative rounded-md"
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
     >
       <Sun
+        weight="bold"
         className="size-5 rotate-0 scale-100 transition-all duration-200 dark:-rotate-90 dark:scale-0"
         aria-hidden="true"
       />
       <Moon
+        weight="bold"
         className="absolute size-5 rotate-90 scale-0 transition-all duration-200 dark:rotate-0 dark:scale-100"
         aria-hidden="true"
       />

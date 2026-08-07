@@ -6,7 +6,7 @@ import { longUrlSchema, slugSchema } from "@/lib/validation";
 import useFetch from "@/hooks/useFetch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Link2, AlertCircle, CheckCircle } from "lucide-react";
+import { ArrowSquareOut, LinkSimple, WarningCircle, CheckCircle } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 const RedirectLink = () => {
@@ -93,13 +93,13 @@ const RedirectLink = () => {
   if (error && !loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center px-4">
-        <Card className="w-full max-w-lg border-destructive/20 bg-destructive/5">
+        <Card className="w-full max-w-lg border-destructive/40 bg-danger-surface">
           <CardContent className="flex flex-col items-center gap-5 py-10 text-center">
-            <div className="flex size-16 items-center justify-center rounded-full bg-destructive/10">
-              <AlertCircle className="size-8 text-destructive" aria-hidden="true" />
+            <div className="flex size-16 items-center justify-center rounded-full bg-danger-surface">
+              <WarningCircle weight="bold" className="size-8 text-destructive" aria-hidden="true" />
             </div>
             <div className="space-y-1.5">
-              <h1 className="text-2xl font-bold text-destructive">
+              <h1 className="font-display text-2xl font-medium text-destructive">
                 Link Not Found
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -126,22 +126,23 @@ const RedirectLink = () => {
       <Card className="w-full max-w-lg">
         <CardContent className="flex flex-col items-center gap-6 py-10">
           <div
-            className="flex size-16 items-center justify-center rounded-full bg-primary/10"
+            className="flex size-16 items-center justify-center rounded-full border border-border bg-muted/40"
             role="status"
             aria-live="polite"
           >
             {isReady ? (
               <CheckCircle
-                className="size-8 text-emerald-500 animate-in zoom-in"
+                weight="bold"
+                className="size-8 text-success animate-in zoom-in"
                 aria-hidden="true"
               />
             ) : (
-              <Link2 className="size-8 animate-pulse text-primary" aria-hidden="true" />
+              <LinkSimple weight="bold" className="size-8 animate-pulse text-foreground" aria-hidden="true" />
             )}
           </div>
 
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-bold">
+            <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
               {isReady ? "Redirecting..." : "Loading..."}
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -155,7 +156,7 @@ const RedirectLink = () => {
 
           {/* Progress bar */}
           <div className="w-full max-w-xs">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-primary transition-all duration-1000 ease-linear"
                 style={{ width: `${((3 - countdown) / 3) * 100}%` }}
@@ -165,8 +166,8 @@ const RedirectLink = () => {
 
           {/* Destination URL */}
           {safeUrl && (
-            <div className="w-full rounded-lg border bg-muted/40 p-4">
-              <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+            <div className="w-full rounded-lg border border-border bg-muted/30 p-4">
+              <p className="mb-2 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
                 Destination
               </p>
               <a
@@ -176,7 +177,7 @@ const RedirectLink = () => {
                 className="flex items-center gap-2 break-all text-sm font-medium text-primary hover:underline"
               >
                 <span className="truncate">{safeUrl}</span>
-                <ExternalLink className="size-4 shrink-0" aria-hidden="true" />
+                <ArrowSquareOut weight="bold" className="size-4 shrink-0" aria-hidden="true" />
               </a>
             </div>
           )}

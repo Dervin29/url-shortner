@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Pencil } from "lucide-react";
+import { PencilSimple } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -223,7 +223,7 @@ const EditLink = ({
               aria-label="Edit link"
               title="Edit link"
             >
-              <Pencil className="size-4" aria-hidden="true" />
+              <PencilSimple weight="bold" className="size-4" aria-hidden="true" />
             </Button>
           }
         />
@@ -231,8 +231,8 @@ const EditLink = ({
 
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg font-bold">
-            <Pencil className="size-5 text-primary" aria-hidden="true" />
+          <DialogTitle className="flex items-center gap-2">
+            <PencilSimple weight="bold" className="size-5 text-muted-foreground" aria-hidden="true" />
             Edit Link
           </DialogTitle>
           <DialogDescription>

@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
@@ -52,9 +52,9 @@ const CopyButton = ({
       title={copied ? successLabel : label}
     >
       {copied ? (
-        <Check className="text-emerald-500" aria-hidden="true" />
+        <Check weight="bold" className="text-success" aria-hidden="true" />
       ) : (
-        <Copy aria-hidden="true" />
+        <Copy weight="bold" aria-hidden="true" />
       )}
       {children && (
         <span className="hidden sm:inline">{copied ? successLabel : children}</span>

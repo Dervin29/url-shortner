@@ -12,27 +12,26 @@ import {
 } from "recharts";
 import {
   ArrowLeft,
-  Calendar,
-  Download,
-  ExternalLink,
-  LinkIcon,
-  MousePointerClick,
-  Pencil,
-  RefreshCw,
-  Trash2,
+  DownloadSimple,
+  ArrowSquareOut,
+  LinkSimple,
+  CursorClick,
+  PencilSimple,
+  ArrowsClockwise,
+  Trash,
   Copy,
   Check,
   Globe,
-  Smartphone,
-  Monitor,
+  DeviceMobile,
   Clock,
-  TrendingUp,
+  TrendUp,
   Users,
   Eye,
-  Share2,
-} from "lucide-react";
+  ShareNetwork,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -57,16 +56,13 @@ import useFetch from "@/hooks/useFetch";
 import DeviceStats from "@/components/DeviceStats";
 import LocationStats from "@/components/LocationStats";
 import EditLink from "@/components/EditLink";
-import CopyButton from "@/components/CopyButton";
-import { useTheme } from "@/context/theme";
 
 // Bento Card Components
 const BentoCard = ({ children, className, variant = "default" }) => (
   <Card
     className={cn(
-      "overflow-hidden transition-all hover:shadow-md",
-      variant === "primary" && "border-primary/20 bg-primary/5",
-      variant === "accent" && "border-accent/20 bg-accent/5",
+      "transition-all hover:shadow-card-hover",
+      variant === "primary" && "border-foreground/20 bg-muted/30",
       className
     )}
   >
@@ -77,23 +73,25 @@ const BentoCard = ({ children, className, variant = "default" }) => (
 const BentoMetric = ({ icon: Icon, label, value, change, trend }) => (
   <div className="flex items-start justify-between">
     <div>
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <p className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1.5 text-2xl font-bold tracking-tight">{value}</p>
+      <p className="mt-1.5 font-mono text-2xl font-semibold tracking-tight">
+        {value}
+      </p>
       {change && (
         <p
           className={cn(
             "mt-1 text-xs font-medium",
-            trend === "up" ? "text-emerald-600" : "text-red-600"
+            trend === "up" ? "text-success" : "text-destructive"
           )}
         >
           {change}
         </p>
       )}
     </div>
-    <div className="rounded-lg bg-primary/10 p-2.5 text-primary">
-      <Icon className="size-4.5" />
+    <div className="rounded-md border border-border bg-muted/40 p-2.5">
+      <Icon weight="bold" className="size-4.5" />
     </div>
   </div>
 );
@@ -101,7 +99,6 @@ const BentoMetric = ({ icon: Icon, label, value, change, trend }) => (
 const LinkPage = () => {
   const navigate = useNavigate();
   const { user } = UrlState();
-  const { theme } = useTheme();
   const { slug } = useParams();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -198,7 +195,7 @@ const LinkPage = () => {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <Skeleton className="mb-8 h-5 w-32" />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Skeleton className="h-32 rounded-xl" />
@@ -216,8 +213,8 @@ const LinkPage = () => {
   if (error || !url) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4 text-center">
-        <div className="rounded-full bg-destructive/10 p-4">
-          <LinkIcon className="size-8 text-destructive" />
+        <div className="rounded-full bg-danger-surface p-4">
+          <LinkSimple weight="bold" className="size-8 text-destructive" />
         </div>
         <div>
           <h2 className="text-xl font-semibold">Link not found</h2>
@@ -227,11 +224,11 @@ const LinkPage = () => {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => fnGetUrl()}>
-            <RefreshCw className="mr-2 size-4" />
+            <ArrowsClockwise weight="bold" className="mr-2 size-4" />
             Retry
           </Button>
           <Button onClick={() => navigate("/dashboard")}>
-            <ArrowLeft className="mr-2 size-4" />
+            <ArrowLeft weight="bold" className="mr-2 size-4" />
             Dashboard
           </Button>
         </div>
@@ -242,29 +239,19 @@ const LinkPage = () => {
   const shortUrl = `${import.meta.env.VITE_APP_URL}/${
     url?.custom_url || url?.short_url
   }`;
-  const createdDate = url?.created_at
-    ? new Date(url.created_at).toLocaleString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
 
   const totalClicks = stats?.length || 0;
 
-  const isDark = theme === "dark";
   const chartColors = {
-    primary: isDark ? "#60A5FA" : "#3B82F6",
-    grid: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(24, 24, 27, 0.06)",
-    axisText: isDark ? "rgba(161, 161, 170, 0.8)" : "rgba(113, 113, 122, 0.8)",
-    cursor: isDark ? "rgba(161, 161, 170, 0.3)" : "rgba(113, 113, 122, 0.3)",
+    primary: "var(--chart-1)",
+    grid: "var(--border)",
+    axisText: "var(--muted-foreground)",
+    cursor: "color-mix(in oklab, var(--muted-foreground) 40%, transparent)",
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
         {/* Navigation */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -274,21 +261,15 @@ const LinkPage = () => {
               className="gap-2"
               onClick={() => navigate("/dashboard")}
             >
-              <ArrowLeft className="size-4" />
+              <ArrowLeft weight="bold" className="size-4" />
               Dashboard
             </Button>
             <div className="h-5 w-px bg-border" />
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium truncate max-w-[200px]">
+              <span className="max-w-[200px] truncate text-sm font-medium">
                 {url?.title || "Untitled Link"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                <span className="relative flex size-1.5">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-40" />
-                  <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
-                </span>
-                Active
-              </span>
+              <Badge variant="success">Active</Badge>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -299,7 +280,8 @@ const LinkPage = () => {
               onClick={refreshStats}
               disabled={loadingStats}
             >
-              <RefreshCw
+              <ArrowsClockwise
+                weight="bold"
                 className={cn("size-3.5", loadingStats && "animate-spin")}
               />
               Refresh
@@ -308,12 +290,12 @@ const LinkPage = () => {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Stats Row */}
           <BentoCard variant="primary" className="lg:col-span-1">
             <CardContent className="p-6">
               <BentoMetric
-                icon={MousePointerClick}
+                icon={CursorClick}
                 label="Total Clicks"
                 value={totalClicks.toLocaleString()}
                 change="+12% from last month"
@@ -361,15 +343,17 @@ const LinkPage = () => {
           {/* Link Details - Large Card */}
           <BentoCard className="md:col-span-2 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">Link Details</CardTitle>
+              <CardTitle className="font-sans text-base font-semibold">
+                Link Details
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <label className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
                   Short Link
                 </label>
-                <div className="mt-1.5 flex items-center gap-1.5 rounded-lg border bg-muted/30 p-2 pl-3">
-                  <LinkIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                <div className="mt-1.5 flex items-center gap-1.5 rounded-lg border border-border bg-muted/30 p-2 pl-3">
+                  <LinkSimple weight="bold" className="size-3.5 shrink-0 text-muted-foreground" />
                   <span className="min-w-0 flex-1 truncate font-mono text-sm">
                     {shortUrl}
                   </span>
@@ -378,9 +362,9 @@ const LinkPage = () => {
                     className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   >
                     {copied ? (
-                      <Check className="size-3.5 text-emerald-500" />
+                      <Check weight="bold" className="size-3.5 text-success" />
                     ) : (
-                      <Copy className="size-3.5" />
+                      <Copy weight="bold" className="size-3.5" />
                     )}
                   </button>
                   <a
@@ -389,13 +373,13 @@ const LinkPage = () => {
                     rel="noreferrer"
                     className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   >
-                    <ExternalLink className="size-3.5" />
+                    <ArrowSquareOut weight="bold" className="size-3.5" />
                   </a>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <label className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
                   Destination
                 </label>
                 <a
@@ -404,7 +388,7 @@ const LinkPage = () => {
                   rel="noreferrer"
                   className="mt-1.5 flex items-start gap-2 break-all text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <ExternalLink className="mt-0.5 size-3.5 shrink-0" />
+                  <ArrowSquareOut weight="bold" className="mt-0.5 size-3.5 shrink-0" />
                   <span className="line-clamp-2">{url?.original_url}</span>
                 </a>
               </div>
@@ -416,7 +400,7 @@ const LinkPage = () => {
                   className="gap-2"
                   onClick={() => setIsEditDialogOpen(true)}
                 >
-                  <Pencil className="size-3.5" />
+                  <PencilSimple weight="bold" className="size-3.5" />
                   Edit
                 </Button>
                 <Button
@@ -426,23 +410,25 @@ const LinkPage = () => {
                   onClick={downloadImage}
                   disabled={!url?.qr}
                 >
-                  <Download className="size-3.5" />
+                  <DownloadSimple weight="bold" className="size-3.5" />
                   QR
                 </Button>
                 <Dialog
                   open={isDeleteDialogOpen}
                   onOpenChange={setIsDeleteDialogOpen}
                 >
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      disabled={loadingDelete}
-                      className="gap-2"
-                    >
-                      <Trash2 className="size-3.5" />
-                      Delete
-                    </Button>
+                  <DialogTrigger
+                    render={
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={loadingDelete}
+                        className="gap-2"
+                      />
+                    }
+                  >
+                    <Trash weight="bold" className="size-3.5" />
+                    Delete
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
@@ -453,8 +439,8 @@ const LinkPage = () => {
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                      <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                      <DialogClose render={<Button variant="outline" />}>
+                        Cancel
                       </DialogClose>
                       <Button
                         variant="destructive"
@@ -480,22 +466,24 @@ const LinkPage = () => {
           {/* QR Code Card */}
           <BentoCard className="md:col-span-2 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">QR Code</CardTitle>
+              <CardTitle className="font-sans text-base font-semibold">
+                QR Code
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex items-center justify-center">
               {url?.qr ? (
-                <div className="rounded-xl border bg-white p-4 dark:bg-gray-900">
+                <div className="rounded-lg border border-border bg-white p-4 dark:bg-card">
                   <img
                     src={url.qr}
                     alt="QR Code"
-                    className="size-40 rounded-lg"
+                    className="size-40 rounded-md"
                     loading="lazy"
                   />
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-2 py-4 text-center">
                   <div className="rounded-full bg-muted/30 p-3">
-                    <Share2 className="size-6 text-muted-foreground" />
+                    <ShareNetwork weight="bold" className="size-6 text-muted-foreground" />
                   </div>
                   <p className="text-sm text-muted-foreground">No QR code available</p>
                 </div>
@@ -506,7 +494,7 @@ const LinkPage = () => {
           {/* Chart - Full Width */}
           <BentoCard className="md:col-span-2 lg:col-span-4">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="font-sans text-base font-semibold">
                 Clicks Over Time
               </CardTitle>
             </CardHeader>
@@ -523,14 +511,14 @@ const LinkPage = () => {
               ) : stats.length === 0 ? (
                 <div className="flex flex-col items-center gap-3 py-8">
                   <div className="rounded-full bg-muted/30 p-3">
-                    <TrendingUp className="size-6 text-muted-foreground" />
+                    <TrendUp weight="bold" className="size-6 text-muted-foreground" />
                   </div>
                   <p className="text-sm text-muted-foreground">
                     No clicks yet. Share your link to start tracking!
                   </p>
                 </div>
               ) : (
-                <div className="h-56 rounded-xl border p-3">
+                <div className="h-56 rounded-lg border border-border p-3">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                       data={clicksOverTime}
@@ -547,12 +535,12 @@ const LinkPage = () => {
                           <stop
                             offset="0%"
                             stopColor={chartColors.primary}
-                            stopOpacity={0.3}
+                            stopOpacity={0.2}
                           />
                           <stop
                             offset="100%"
                             stopColor={chartColors.primary}
-                            stopOpacity={0.02}
+                            stopOpacity={0.01}
                           />
                         </linearGradient>
                       </defs>
@@ -608,9 +596,9 @@ const LinkPage = () => {
           {/* Location & Devices - Side by Side */}
           <BentoCard className="md:col-span-1 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="font-sans text-base font-semibold">
                 <div className="flex items-center gap-2">
-                  <Globe className="size-4" />
+                  <Globe weight="bold" className="size-4" />
                   Location
                 </div>
               </CardTitle>
@@ -628,9 +616,9 @@ const LinkPage = () => {
 
           <BentoCard className="md:col-span-1 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">
+              <CardTitle className="font-sans text-base font-semibold">
                 <div className="flex items-center gap-2">
-                  <Smartphone className="size-4" />
+                  <DeviceMobile weight="bold" className="size-4" />
                   Devices
                 </div>
               </CardTitle>

@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { QRCode } from "react-qrcode-logo";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Reveal from "@/components/Reveal";
 import {
   ArrowRight,
-  BarChart3,
+  ChartBar,
   Copy,
-  Link2,
-  MonitorSmartphone,
+  LinkSimple,
+  DeviceMobile,
   QrCode,
   Scissors,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { UrlState } from "@/context/context";
 
 const APP_URL = import.meta.env.VITE_APP_URL || "trimrr.app";
@@ -31,7 +33,7 @@ const MiniBars = ({ values = WEEK, className = "" }) => (
     {values.map((v, i) => (
       <span
         key={i}
-        className="flex-1 rounded-t-md bg-primary/70 transition-colors last:bg-primary"
+        className="flex-1 rounded-t-sm bg-foreground/15 transition-colors last:bg-foreground"
         style={{ height: `${(v / Math.max(...values)) * 100}%` }}
       />
     ))}
@@ -47,14 +49,14 @@ const MiniLine = () => (
   >
     <defs>
       <linearGradient id="demoArea" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="currentColor" stopOpacity="0.25" />
+        <stop offset="0%" stopColor="currentColor" stopOpacity="0.2" />
         <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
       </linearGradient>
     </defs>
     <path
       d="M0 52 C 24 48, 32 30, 52 34 S 88 18, 108 26 S 150 8, 170 14 S 192 8, 200 4 L 200 64 L 0 64 Z"
       fill="url(#demoArea)"
-      className="text-primary"
+      className="text-foreground"
     />
     <path
       d="M0 52 C 24 48, 32 30, 52 34 S 88 18, 108 26 S 150 8, 170 14 S 192 8, 200 4"
@@ -62,14 +64,14 @@ const MiniLine = () => (
       stroke="currentColor"
       strokeWidth="2.5"
       strokeLinecap="round"
-      className="text-primary"
+      className="text-foreground"
     />
   </svg>
 );
 
 const FEATURES = [
   {
-    icon: BarChart3,
+    icon: ChartBar,
     title: "Track clicks",
     description:
       "See total clicks, top cities, and device splits for every link — live.",
@@ -81,22 +83,20 @@ const FEATURES = [
         </p>
       </div>
     ),
-    className: "",
   },
   {
-    icon: Link2,
+    icon: LinkSimple,
     title: "Custom links",
     description:
       "Own your slug. Branded short links that look like they were always yours.",
     visual: (
       <div className="mt-8">
-        <div className="flex flex-wrap items-center gap-1.5 rounded-xl border bg-muted/40 p-3 font-mono text-sm">
+        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-muted/30 p-3 font-mono text-sm">
           <span className="text-muted-foreground">{SHORT_DOMAIN}/</span>
-          <span className="font-semibold text-primary">my-brand</span>
+          <span className="font-semibold text-foreground">my-brand</span>
         </div>
       </div>
     ),
-    className: "",
   },
 ];
 
@@ -107,21 +107,16 @@ const LandingPage = () => {
   return (
     <div>
       {/* Hero — asymmetric split */}
-      <section className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
-        <div>
-          <span className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            Free forever · no credit card
-          </span>
+      <section className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
+        <div className="ambient-blob -top-32 left-1/4 -z-10 size-[32rem] bg-info-fg" />
 
-          <h1 className="mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+        <Reveal>
+          <Badge variant="outline">Free forever · no credit card</Badge>
+
+          <h1 className="mt-6 font-display text-[2.75rem] leading-[1.05] font-medium tracking-[-0.03em] sm:text-6xl lg:text-[4rem]">
             Make every link
             <br />
-            <span className="inline-flex flex-wrap items-center gap-3">
-              <span className="inline-flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-card sm:size-11">
-                <Scissors className="size-4.5 sm:size-5.5" aria-hidden="true" />
-              </span>
-              <span className="text-primary">count twice.</span>
-            </span>
+            count twice.
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
@@ -133,26 +128,24 @@ const LandingPage = () => {
             {isAuthenticated ? (
               <Button
                 size="lg"
-                className="text-base"
                 onClick={() => navigate("/dashboard")}
               >
                 Go to Dashboard
-                <ArrowRight className="size-4" aria-hidden="true" />
+                <ArrowRight weight="bold" className="size-4" aria-hidden="true" />
               </Button>
             ) : (
               <>
                 <Button
                   size="lg"
-                  className="text-base"
                   onClick={() => navigate("/auth?tab=signup")}
                 >
                   Get Started Free
-                  <ArrowRight className="size-4" aria-hidden="true" />
+                  <ArrowRight weight="bold" className="size-4" aria-hidden="true" />
                 </Button>
                 <Button
                   size="lg"
                   variant="ghost"
-                  className="text-base text-muted-foreground"
+                  className="text-muted-foreground"
                   onClick={() => navigate("/auth?tab=login")}
                 >
                   Sign in
@@ -161,24 +154,22 @@ const LandingPage = () => {
             )}
           </div>
 
-          <p className="mt-6 font-mono text-xs uppercase tracking-widest text-muted-foreground/80">
+          <p className="mt-6 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
             No credit card · 60-second setup
           </p>
-        </div>
+        </Reveal>
 
         {/* Live product demo */}
-        <div className="animate-float lg:pl-6">
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-card sm:p-6">
+        <Reveal delay={120}>
+          <div className="rounded-xl border border-border bg-card p-5 sm:p-6">
             <div className="flex items-center justify-between">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
                 Your short link
               </p>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-xs font-medium text-primary">
-                demo preview
-              </span>
+              <Badge variant="info">demo preview</Badge>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 rounded-xl border border-border bg-background p-3.5">
+            <div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-background p-3.5">
               <span className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
                 {SHORT_DOMAIN}/a4f9z
               </span>
@@ -188,17 +179,17 @@ const LandingPage = () => {
                 className="shrink-0 text-muted-foreground"
                 aria-label="Copy demo link"
               >
-                <Copy className="size-4" aria-hidden="true" />
+                <Copy weight="bold" className="size-4" aria-hidden="true" />
               </Button>
             </div>
 
             <div className="mt-4 grid grid-cols-[auto_1fr] gap-4">
-              <div className="flex size-24 items-center justify-center rounded-xl border border-border bg-background p-2">
+              <div className="flex size-24 items-center justify-center rounded-lg border border-border bg-background p-2">
                 <QRCode
                   size={80}
                   value={`${APP_URL}/a4f9z`}
                   bgColor="#ffffff"
-                  fgColor="#18181b"
+                  fgColor="#171717"
                   level="H"
                   includeMargin={false}
                 />
@@ -206,7 +197,7 @@ const LandingPage = () => {
               <div className="flex flex-col justify-between">
                 <div>
                   <p className="text-sm font-semibold">Clicks today</p>
-                  <p className="mt-0.5 font-mono text-2xl font-semibold text-primary">
+                  <p className="mt-0.5 font-mono text-2xl font-semibold">
                     46
                   </p>
                 </div>
@@ -216,7 +207,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-border bg-background p-3.5">
+            <div className="mt-4 rounded-lg border border-border bg-background p-3.5">
               <div className="flex items-center justify-between">
                 <p className="font-mono text-xs text-muted-foreground">
                   last 7 days
@@ -228,108 +219,119 @@ const LandingPage = () => {
               <MiniBars className="mt-3 h-12" />
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Features — bento */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Everything you need
-          </h2>
-          <p className="mt-3 text-lg text-muted-foreground">
-            One tool to shorten, share, and understand every link you create.
-          </p>
-        </div>
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <Reveal>
+          <div className="max-w-2xl">
+            <h2 className="font-display text-3xl font-medium tracking-[-0.02em] sm:text-4xl">
+              Everything you need
+            </h2>
+            <p className="mt-3 text-lg text-muted-foreground">
+              One tool to shorten, share, and understand every link you create.
+            </p>
+          </div>
+        </Reveal>
 
         <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Shorten — large tile */}
-          <div
-            className="stagger-item rounded-3xl border border-border bg-card p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-1"
-            style={{ "--i": 0 }}
+          <Reveal
+            delay={0}
+            className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-1"
           >
-            <div className="flex size-12 animate-float items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Scissors className="size-6" aria-hidden="true" />
+            <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
+              <Scissors weight="bold" className="size-6" aria-hidden="true" />
             </div>
-            <h3 className="mt-5 text-xl font-semibold">Shorten URLs</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-[-0.01em]">
+              Shorten URLs
+            </h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Transform long, messy links into clean, shareable short URLs in
               seconds.
             </p>
-            <div className="mt-8 rounded-xl border border-border bg-muted/40 p-3 font-mono text-xs">
+            <div className="mt-8 rounded-lg border border-border bg-muted/30 p-3 font-mono text-xs">
               <p className="truncate text-muted-foreground">
                 https://example.com/very/long/path?utm_source=newsletter
               </p>
               <p className="mt-2 flex items-center gap-2 text-foreground">
                 <ArrowRight
+                  weight="bold"
                   className="size-3.5 text-muted-foreground"
                   aria-hidden="true"
                 />
                 <span className="text-primary">{SHORT_DOMAIN}/a4f9z</span>
               </p>
             </div>
-          </div>
+          </Reveal>
 
           {FEATURES.map((feature, i) => {
             const Icon = feature.icon;
             return (
-              <div
+              <Reveal
                 key={feature.title}
-                className="stagger-item rounded-3xl border border-border bg-card p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8"
-                style={{ "--i": i + 1 }}
+                delay={(i + 1) * 80}
+                className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8"
               >
-                <div className="flex size-12 animate-float animate-float-delayed items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <Icon className="size-6" aria-hidden="true" />
+                <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
+                  <Icon weight="bold" className="size-6" aria-hidden="true" />
                 </div>
-                <h3 className="mt-5 text-xl font-semibold">{feature.title}</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-[-0.01em]">
+                  {feature.title}
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {feature.description}
                 </p>
                 {feature.visual}
-              </div>
+              </Reveal>
             );
           })}
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-5">
           {/* QR — wide tile */}
-          <div
-            className="stagger-item rounded-3xl border border-border bg-card p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-3"
-            style={{ "--i": 3 }}
+          <Reveal
+            delay={320}
+            className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-3"
           >
             <div className="flex items-start gap-6 sm:items-center">
-              <div className="flex size-24 shrink-0 items-center justify-center rounded-2xl border border-border bg-background p-2">
+              <div className="flex size-24 shrink-0 items-center justify-center rounded-lg border border-border bg-background p-2">
                 <QRCode
                   size={80}
                   value={APP_URL}
                   bgColor="#ffffff"
-                  fgColor="#18181b"
+                  fgColor="#171717"
                   level="H"
                   includeMargin={false}
                 />
               </div>
               <div>
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <QrCode className="size-6" aria-hidden="true" />
+                <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
+                  <QrCode weight="bold" className="size-6" aria-hidden="true" />
                 </div>
-                <h3 className="mt-5 text-xl font-semibold">QR codes</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-[-0.01em]">
+                  QR codes
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   Every link ships with a scannable QR — print it, ship it,
                   point a phone at it.
                 </p>
               </div>
             </div>
-          </div>
+          </Reveal>
 
           {/* Analytics — narrow tile */}
-          <div
-            className="stagger-item rounded-3xl border border-border bg-card p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-2"
-            style={{ "--i": 4 }}
+          <Reveal
+            delay={400}
+            className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-2"
           >
-            <div className="flex size-12 animate-float items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <BarChart3 className="size-6" aria-hidden="true" />
+            <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
+              <ChartBar weight="bold" className="size-6" aria-hidden="true" />
             </div>
-            <h3 className="mt-5 text-xl font-semibold">Real-time analytics</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-[-0.01em]">
+              Real-time analytics
+            </h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Cities, devices, and click curves — refreshed the moment a link is
               hit.
@@ -337,44 +339,44 @@ const LandingPage = () => {
             <div className="mt-6">
               <MiniLine />
               <div className="mt-3 flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 font-mono text-xs text-muted-foreground">
-                  <MonitorSmartphone className="size-3" aria-hidden="true" />
+                <Badge variant="outline">
+                  <DeviceMobile weight="bold" className="mr-1.5 size-3" aria-hidden="true" />
                   Desktop
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 font-mono text-xs text-muted-foreground">
-                  Mobile
-                </span>
+                </Badge>
+                <Badge variant="outline">Mobile</Badge>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* CTA */}
       {!isAuthenticated && (
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-[#18181b] p-8 text-white sm:p-12">
-            <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-primary/20 blur-3xl" />
-            <div className="relative flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
-              <div className="max-w-xl">
-                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                  Ready to simplify your links?
-                </h2>
-                <p className="mt-3 text-muted-foreground">
-                  Join the people who trust Trimrr to manage, track, and
-                  optimize their links.
-                </p>
+        <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <Reveal>
+            <div className="relative overflow-hidden rounded-xl bg-primary p-8 text-primary-foreground sm:p-12">
+              <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-foreground/10 blur-3xl" />
+              <div className="relative flex flex-col items-start justify-between gap-8 sm:flex-row sm:items-center">
+                <div className="max-w-xl">
+                  <h2 className="font-display text-3xl font-medium tracking-[-0.02em]">
+                    Ready to simplify your links?
+                  </h2>
+                  <p className="mt-3 text-primary-foreground/70">
+                    Join the people who trust Trimrr to manage, track, and
+                    optimize their links.
+                  </p>
+                </div>
+                <Button
+                  size="lg"
+                  className="bg-primary-foreground text-primary hover:opacity-90"
+                  onClick={() => navigate("/auth?tab=signup")}
+                >
+                  Create Your Free Account
+                  <ArrowRight weight="bold" className="size-4" aria-hidden="true" />
+                </Button>
               </div>
-              <Button
-                size="lg"
-                className="bg-white text-[#18181b] hover:bg-white/90"
-                onClick={() => navigate("/auth?tab=signup")}
-              >
-                Create Your Free Account
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Button>
             </div>
-          </div>
+          </Reveal>
         </section>
       )}
     </div>

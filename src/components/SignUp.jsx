@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 import Spinner from "@/components/ui/spinner";
 import Error from "./Error";
 import PasswordInput from "./PasswordInput";
-import { Camera, User, X } from "lucide-react";
+import { Camera, User, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { signup } from "@/db/apiAuth";
@@ -262,6 +262,7 @@ const Signup = () => {
                   />
                 ) : (
                   <User
+                    weight="bold"
                     className="size-6 text-muted-foreground"
                     aria-hidden="true"
                   />
@@ -275,9 +276,9 @@ const Signup = () => {
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <label
                     htmlFor="profile_pic"
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
                   >
-                    <Camera className="size-3.5" aria-hidden="true" />
+                    <Camera weight="bold" className="size-3.5" aria-hidden="true" />
                     {previewUrl ? "Change photo" : "Upload"}
                   </label>
                   {previewUrl && (
@@ -286,7 +287,7 @@ const Signup = () => {
                       onClick={removePhoto}
                       className="inline-flex items-center gap-1 rounded-md text-xs font-medium text-muted-foreground underline-offset-2 transition-colors hover:text-destructive hover:underline"
                     >
-                      <X className="size-3.5" aria-hidden="true" />
+                      <X weight="bold" className="size-3.5" aria-hidden="true" />
                       Remove
                     </button>
                   )}

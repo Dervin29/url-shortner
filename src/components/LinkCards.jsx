@@ -3,9 +3,16 @@ import { toast } from "sonner";
 import useFetch from "@/hooks/useFetch";
 import { deleteUrl } from "@/db/apiUrls";
 import { useState } from "react";
-import { Calendar, MousePointerClick, Trash2, Download, ExternalLink } from "lucide-react";
+import {
+  Calendar,
+  CursorClick,
+  Trash,
+  DownloadSimple,
+  ArrowSquareOut,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import {
   Dialog,
   DialogTrigger,
@@ -69,10 +76,10 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
   return (
     <article
       className={cn(
-        "group flex flex-wrap items-center gap-4 rounded-2xl border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
+        "group flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
         selected
-          ? "border-primary/50 bg-primary/5 shadow-card"
-          : "border-border hover:border-primary/30 hover:shadow-card-hover",
+          ? "border-foreground bg-muted/40"
+          : "border-border hover:border-foreground/30 hover:shadow-card-hover",
       )}
     >
       {/* Selection checkbox */}
@@ -82,7 +89,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           checked={selected || false}
           onChange={() => onToggle?.(url?.id)}
           aria-label={`Select ${url?.title || "link"}`}
-          className="size-4.5 cursor-pointer rounded border-muted-foreground/30 text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="size-4 cursor-pointer rounded border-muted-foreground/40 bg-background text-primary accent-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 
@@ -95,7 +102,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
         <img
           src={url?.qr}
           alt={`QR code for ${url?.title || "link"}`}
-          className="size-20 rounded-lg border bg-white p-1.5 shadow-sm transition-transform duration-200 group-hover:scale-105 sm:size-24"
+          className="size-20 rounded-lg border border-border bg-white p-1.5 transition-transform duration-200 group-hover:scale-105 sm:size-24"
           loading="lazy"
         />
       </Link>
@@ -107,7 +114,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           className="group/link block"
           aria-label={`View stats for ${url?.title || "link"}`}
         >
-          <h2 className="truncate text-base font-semibold transition-colors group-hover/link:text-primary sm:text-lg">
+          <h2 className="truncate text-base font-semibold tracking-[-0.01em] transition-colors group-hover/link:text-foreground sm:text-lg">
             {url?.title || "Untitled Link"}
           </h2>
         </Link>
@@ -125,7 +132,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           <CopyButton
             text={shortUrl}
             size="icon-xs"
-            className="shrink-0 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+            className="shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground"
           />
           <a
             href={shortUrl}
@@ -135,7 +142,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
             aria-label="Open shortened link in new tab"
             title="Open link"
           >
-            <ExternalLink className="size-3.5" aria-hidden="true" />
+            <ArrowSquareOut weight="bold" className="size-3.5" aria-hidden="true" />
           </a>
         </div>
 
@@ -143,13 +150,13 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           {url?.original_url}
         </p>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <Calendar className="size-3.5" aria-hidden="true" />
+            <Calendar weight="bold" className="size-3.5" aria-hidden="true" />
             <time dateTime={url?.created_at}>{createdDate}</time>
           </span>
           <span className="flex items-center gap-1.5">
-            <MousePointerClick className="size-3.5" aria-hidden="true" />
+            <CursorClick weight="bold" className="size-3.5" aria-hidden="true" />
             <span>
               <span className="font-medium text-foreground">
                 {clickCount.toLocaleString()}
@@ -157,13 +164,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
               click{clickCount === 1 ? "" : "s"}
             </span>
           </span>
-          <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-500">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-40" />
-              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-            </span>
-            Active
-          </span>
+          <Badge variant="success">Active</Badge>
         </div>
       </div>
 
@@ -172,13 +173,13 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
         <Button
           size="icon-sm"
           variant="ghost"
-          className="text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-600"
+          className="text-muted-foreground hover:bg-success-surface hover:text-success"
           onClick={downloadImage}
           title="Download QR code"
           aria-label="Download QR code"
           disabled={!url?.qr}
         >
-          <Download className="size-4" aria-hidden="true" />
+          <DownloadSimple weight="bold" className="size-4" aria-hidden="true" />
         </Button>
 
         <EditLink
@@ -186,7 +187,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           fetchUrls={fetchUrls}
           iconOnly
           buttonVariant="ghost"
-          className="text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground"
         />
 
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -195,15 +196,15 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
               <Button
                 size="icon-sm"
                 variant="ghost"
-                className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                className="text-muted-foreground hover:bg-danger-surface hover:text-danger-fg"
                 title="Delete link"
                 aria-label="Delete link"
                 disabled={loadingDelete}
               >
                 {loadingDelete ? (
-                  <span className="size-4 animate-spin rounded-full border-2 border-destructive/40 border-t-destructive" />
+                  <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 ) : (
-                  <Trash2 className="size-4" aria-hidden="true" />
+                  <Trash weight="bold" className="size-4" aria-hidden="true" />
                 )}
               </Button>
             }
@@ -212,7 +213,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-destructive">
-                <Trash2 className="size-5" aria-hidden="true" />
+                <Trash weight="bold" className="size-5" aria-hidden="true" />
                 Delete Link
               </DialogTitle>
               <DialogDescription className="pt-1">

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, QrCode, Sparkles } from "lucide-react";
+import { Plus, QrCode, Sparkle } from "@phosphor-icons/react";
 import { QRCode } from "react-qrcode-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,8 +125,8 @@ export function CreateLink({ fetchUrls }) {
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger
         render={
-          <Button className="gap-2 shadow-sm transition-all hover:shadow-md">
-            <Plus className="size-4" aria-hidden="true" />
+          <Button className="gap-2">
+            <Plus weight="bold" className="size-4" aria-hidden="true" />
             Create New Link
           </Button>
         }
@@ -134,8 +134,8 @@ export function CreateLink({ fetchUrls }) {
 
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-lg font-bold">
-            <Sparkles className="size-5 text-primary" aria-hidden="true" />
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkle weight="bold" className="size-5 text-muted-foreground" aria-hidden="true" />
             Create New Link
           </DialogTitle>
           <DialogDescription>
@@ -146,9 +146,9 @@ export function CreateLink({ fetchUrls }) {
         <form onSubmit={createNewLink} noValidate>
           <div className="space-y-4">
             {formValues.longUrl && (
-              <div className="flex flex-col items-center gap-2 rounded-lg bg-muted/40 p-4">
-                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  <QrCode className="size-3.5" aria-hidden="true" />
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-muted/30 p-4">
+                <p className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+                  <QrCode weight="bold" className="size-3.5" aria-hidden="true" />
                   QR code preview
                 </p>
                 <QRCode
@@ -156,7 +156,7 @@ export function CreateLink({ fetchUrls }) {
                   size={160}
                   value={formValues.longUrl}
                   bgColor="#ffffff"
-                  fgColor="#1e293b"
+                  fgColor="#171717"
                   level="H"
                   includeMargin={false}
                 />

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, LogOut, Scissors } from "lucide-react";
+import { SquaresFour, SignOut, Scissors } from "@phosphor-icons/react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { UrlState } from "@/context/context";
 import { toast } from "sonner";
@@ -55,18 +55,20 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 sm:gap-4">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 sm:gap-5">
           <Link
             to="/"
-            className="flex items-center gap-2 font-bold text-lg tracking-tight transition-opacity hover:opacity-80"
+            className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
             aria-label="Trimrr home"
           >
-            <span className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-card">
-              <Scissors className="size-4" aria-hidden="true" />
+            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Scissors weight="bold" className="size-4" aria-hidden="true" />
             </span>
-            <span className="hidden sm:inline">Trimrr</span>
+            <span className="text-lg font-semibold tracking-[-0.02em]">
+              Trimrr
+            </span>
           </Link>
 
           {user && (
@@ -75,9 +77,9 @@ const Header = () => {
                 to="/dashboard"
                 className={({ isActive }) =>
                   cn(
-                    "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                    "relative rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-muted text-foreground"
+                      ? "text-foreground after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-foreground"
                       : "text-muted-foreground hover:text-foreground",
                   )
                 }
@@ -101,14 +103,12 @@ const Header = () => {
                       className="relative size-10 rounded-full p-0"
                       aria-label="Open account menu"
                     >
-                      <Avatar className="size-10 border-2 border-primary/10">
+                      <Avatar className="size-10 border border-border">
                         <AvatarImage
                           src={user.user_metadata?.profile_pic}
                           alt={user.user_metadata?.name}
                         />
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {initials}
-                        </AvatarFallback>
+                        <AvatarFallback>{initials}</AvatarFallback>
                       </Avatar>
                     </Button>
                   }
@@ -121,9 +121,7 @@ const Header = () => {
                         src={user.user_metadata?.profile_pic}
                         alt={user.user_metadata?.name}
                       />
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        {initials}
-                      </AvatarFallback>
+                      <AvatarFallback>{initials}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold">
@@ -141,7 +139,7 @@ const Header = () => {
                     onClick={() => navigate("/dashboard")}
                     className="cursor-pointer"
                   >
-                    <LayoutDashboard className="mr-2 size-4" aria-hidden="true" />
+                    <SquaresFour weight="bold" className="mr-2 size-4" aria-hidden="true" />
                     Dashboard
                   </DropdownMenuItem>
 
@@ -153,7 +151,7 @@ const Header = () => {
                     onClick={() => setIsLogoutDialogOpen(true)}
                     className="cursor-pointer"
                   >
-                    <LogOut className="mr-2 size-4" aria-hidden="true" />
+                    <SignOut weight="bold" className="mr-2 size-4" aria-hidden="true" />
                     {loading ? "Logging out..." : "Logout"}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -166,7 +164,7 @@ const Header = () => {
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-destructive">
-                      <LogOut className="size-5" aria-hidden="true" />
+                      <SignOut weight="bold" className="size-5" aria-hidden="true" />
                       Confirm Logout
                     </DialogTitle>
                     <DialogDescription className="pt-1">

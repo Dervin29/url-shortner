@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
-  ArrowDownUp,
-  ChevronLeft,
-  ChevronRight,
-  Inbox,
-  Link2,
-  MousePointerClick,
-  Search,
-  Trash2,
+  ArrowsDownUp,
+  CaretLeft,
+  CaretRight,
+  Tray,
+  LinkSimple,
+  CursorClick,
+  MagnifyingGlass,
+  Trash,
   X,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import CreateLink from "@/components/CreateLink";
 import Error from "@/components/Error";
 import EmptyState from "@/components/EmptyState";
@@ -51,13 +51,13 @@ const SORT_OPTIONS = [
 const APP_URL = import.meta.env.VITE_APP_URL;
 
 const StatCard = ({ icon: Icon, label, value, loading, hint }) => (
-  <Card className="border-border/70 transition-all hover:shadow-card-hover">
+  <Card className="transition-all hover:shadow-card-hover">
     <CardHeader className="flex flex-row items-center justify-between pb-2">
-      <CardTitle className="text-sm font-medium text-muted-foreground">
+      <CardTitle className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
         {label}
       </CardTitle>
-      <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <Icon className="size-4" aria-hidden="true" />
+      <div className="flex size-9 items-center justify-center rounded-md border border-border bg-muted/40">
+        <Icon weight="bold" className="size-4" aria-hidden="true" />
       </div>
     </CardHeader>
     <CardContent>
@@ -74,7 +74,7 @@ const StatCard = ({ icon: Icon, label, value, loading, hint }) => (
 );
 
 const LinkCardSkeleton = () => (
-  <div className="flex items-center gap-4 rounded-2xl border p-4 sm:p-5">
+  <div className="flex items-center gap-4 rounded-xl border border-border p-4 sm:p-5">
     <Skeleton className="size-5 shrink-0 rounded" />
     <Skeleton className="hidden size-20 shrink-0 rounded-lg sm:block sm:size-24" />
     <div className="flex-1 space-y-2.5">
@@ -134,7 +134,7 @@ const Dashboard = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urls]);
-  
+
   const visibleUrls = useMemo(() => {
     if (!urls) return [];
     const query = searchQuery.trim().toLowerCase();
@@ -230,14 +230,14 @@ const Dashboard = () => {
   const isLoading = loading || loadingClicks;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {/* Page header */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="font-display text-3xl font-medium tracking-[-0.02em] sm:text-4xl">
             Your Links
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-2 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
             Manage and track all your shortened URLs
           </p>
         </div>
@@ -258,7 +258,7 @@ const Dashboard = () => {
           </div>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center gap-4 rounded-2xl border border-destructive/20 bg-destructive/5 px-6 py-12 text-center">
+        <div className="flex flex-col items-center gap-4 rounded-xl border border-destructive/30 bg-danger-surface px-6 py-12 text-center">
           <Error message={error.message || "Failed to load your links"} />
           <Button variant="outline" onClick={() => fnUrls()}>
             Try again
@@ -269,7 +269,7 @@ const Dashboard = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <StatCard
-              icon={Link2}
+              icon={LinkSimple}
               label="Total Links"
               value={(urls?.length || 0).toLocaleString()}
               loading={loading}
@@ -280,7 +280,7 @@ const Dashboard = () => {
               }
             />
             <StatCard
-              icon={MousePointerClick}
+              icon={CursorClick}
               label="Total Clicks"
               value={totalClicks.toLocaleString()}
               loading={loadingClicks}
@@ -297,7 +297,8 @@ const Dashboard = () => {
           {/* Search + Sort */}
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
-              <Search
+              <MagnifyingGlass
+                weight="bold"
                 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
@@ -313,10 +314,10 @@ const Dashboard = () => {
                 <button
                   type="button"
                   onClick={() => handleSearchChange("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   aria-label="Clear search"
                 >
-                  <X className="size-4" aria-hidden="true" />
+                  <X weight="bold" className="size-4" aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -326,7 +327,7 @@ const Dashboard = () => {
                 render={
                   <Button variant="outline" className="justify-between sm:w-44">
                     <span className="flex items-center gap-2">
-                      <ArrowDownUp className="size-4" aria-hidden="true" />
+                      <ArrowsDownUp weight="bold" className="size-4" aria-hidden="true" />
                       {SORT_OPTIONS.find((o) => o.value === sortBy)?.label}
                     </span>
                   </Button>
@@ -348,13 +349,13 @@ const Dashboard = () => {
 
           {/* Bulk Actions Toolbar */}
           {selectedIds.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-primary/5 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-3 py-2">
               <label className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="checkbox"
                   checked={allVisibleSelected}
                   onChange={toggleSelectAll}
-                  className="size-4 cursor-pointer rounded border-muted-foreground/30 text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="size-4 cursor-pointer rounded border-muted-foreground/40 accent-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 />
                 <span className="text-sm font-medium">
                   {selectedIds.length} selected
@@ -384,7 +385,7 @@ const Dashboard = () => {
                 onClick={() => setIsBulkDeleteDialogOpen(true)}
                 className="gap-2"
               >
-                <Trash2 className="size-4" aria-hidden="true" />
+                <Trash weight="bold" className="size-4" aria-hidden="true" />
                 Delete Selected
               </Button>
             </div>
@@ -393,14 +394,14 @@ const Dashboard = () => {
           {/* Empty state: no links at all */}
           {!loading && urls?.length === 0 && !searchQuery && (
             <EmptyState
-              icon={Inbox}
+              icon={Tray}
               title="No links yet"
               description="Turn your first long URL into a short, shareable link with analytics."
               className="py-16"
             >
               <ol className="mt-5 space-y-3 text-left text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-muted/40 text-xs font-semibold text-foreground">
                     1
                   </span>
                   <span>
@@ -409,7 +410,7 @@ const Dashboard = () => {
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-muted/40 text-xs font-semibold text-foreground">
                     2
                   </span>
                   <span>
@@ -424,7 +425,7 @@ const Dashboard = () => {
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-muted/40 text-xs font-semibold text-foreground">
                     3
                   </span>
                   <span>
@@ -448,7 +449,7 @@ const Dashboard = () => {
             visibleUrls.length === 0 &&
             searchQuery && (
               <EmptyState
-                icon={Search}
+                icon={MagnifyingGlass}
                 title="No matching links"
                 description={`Nothing found for "${searchQuery}". Try a different search term.`}
                 action={
@@ -507,7 +508,7 @@ const Dashboard = () => {
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   aria-label="Previous page"
                 >
-                  <ChevronLeft className="size-4" aria-hidden="true" />
+                  <CaretLeft weight="bold" className="size-4" aria-hidden="true" />
                 </Button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
@@ -533,7 +534,7 @@ const Dashboard = () => {
                   }
                   aria-label="Next page"
                 >
-                  <ChevronRight className="size-4" aria-hidden="true" />
+                  <CaretRight weight="bold" className="size-4" aria-hidden="true" />
                 </Button>
               </nav>
             </div>
@@ -549,7 +550,7 @@ const Dashboard = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
-              <Trash2 className="size-5" aria-hidden="true" />
+              <Trash weight="bold" className="size-5" aria-hidden="true" />
               Delete {selectedIds.length} Link{selectedIds.length > 1 ? "s" : ""}
             </DialogTitle>
             <DialogDescription className="pt-1">

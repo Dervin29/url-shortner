@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Scissors, Link2 } from "lucide-react";
+import { Scissors, LinkSimple } from "@phosphor-icons/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Login from "@/components/Login";
 import Signup from "@/components/SignUp";
@@ -20,23 +20,27 @@ const Auth = () => {
     <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center px-4 py-6 sm:py-8">
       <div className="w-full max-w-md">
         <div className="mb-5 flex flex-col items-center text-center">
-          <div className="mb-2.5 flex size-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-card">
-            <Scissors className="size-5" aria-hidden="true" />
+          <div className="mb-2.5 flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Scissors weight="bold" className="size-5" aria-hidden="true" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-            {tab === "signup" ? "Create your account" : "Welcome back to Trimrr"}
+          <h1 className="font-display text-2xl font-medium tracking-[-0.02em] sm:text-3xl">
+            {tab === "signup" ? "Create your account" : "Welcome back"}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
             {tab === "signup"
-              ? "Shorten, track, and customize your links for free."
+              ? "Shorten, track, and customize your links."
               : "Sign in to manage your links and analytics."}
           </p>
         </div>
 
         {longLink && (
-          <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
-            <Link2 className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-            <p>
+          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-border bg-muted/40 p-3 text-sm">
+            <LinkSimple
+              weight="bold"
+              className="mt-0.5 size-4 shrink-0 text-foreground"
+              aria-hidden="true"
+            />
+            <p className="text-muted-foreground">
               You're one step away from saving your link.{" "}
               {tab === "signup" ? "Create an account" : "Sign in"}{" "}
               to continue right where you left off.
@@ -45,16 +49,20 @@ const Auth = () => {
         )}
 
         <Tabs value={tab} onValueChange={switchTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          <TabsList variant="line" className="w-full">
+            <TabsTrigger value="login" className="flex-1">
+              Login
+            </TabsTrigger>
+            <TabsTrigger value="signup" className="flex-1">
+              Sign Up
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="login" className="mt-3">
+          <TabsContent value="login" className="mt-5">
             <Login />
           </TabsContent>
 
-          <TabsContent value="signup" className="mt-3">
+          <TabsContent value="signup" className="mt-5">
             <Signup />
           </TabsContent>
         </Tabs>

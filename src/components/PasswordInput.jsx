@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 
 const PasswordInput = ({
@@ -40,9 +40,9 @@ const PasswordInput = ({
         disabled={disabled}
       >
         {show ? (
-          <EyeOff className="size-4" aria-hidden="true" />
+          <EyeSlash weight="bold" className="size-4" aria-hidden="true" />
         ) : (
-          <Eye className="size-4" aria-hidden="true" />
+          <Eye weight="bold" className="size-4" aria-hidden="true" />
         )}
       </button>
     </div>

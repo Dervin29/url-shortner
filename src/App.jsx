@@ -7,6 +7,8 @@ import AppLayout from "./layouts/app-layout";
 import RequireAuth from "./components/require-auth";
 import RequireGuest from "./components/require-guest";
 import PageLoader from "./components/PageLoader";
+import RouteError from "./components/RouteError";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 import RedirectLink from "./pages/RedirectLink";
 import LandingPage from "./pages/LandingPage";
@@ -30,6 +32,7 @@ const GuestGuard = ({ children }) => (
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
+    errorElement: <RouteError />,
     children: [
       {
         path: "/",
@@ -69,11 +72,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ThemeProvider>
-      <UrlProvider>
-        <RouterProvider router={router} />
-      </UrlProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <UrlProvider>
+          <RouterProvider router={router} />
+        </UrlProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

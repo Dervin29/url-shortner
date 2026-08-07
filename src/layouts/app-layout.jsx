@@ -31,14 +31,14 @@ const AppLayout = () => {
         </div>
       </main>
 
-      <footer className="border-t bg-foreground">
+      <footer className="border-t bg-primary">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-background/70 sm:flex-row sm:px-6 lg:px-8">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-background">
-            <span className="text-primary">Trimrr</span> · Shorten. Share. Measure.
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-primary-foreground">
+            <span className="text-secondary">Trimrr</span> · Shorten. Share. Measure.
           </p>
-          <p className="font-mono text-xs text-background/60">
+          <p className="font-mono text-xs text-primary-foreground/60">
             Built by{" "}
-            <span className="font-bold text-background">Alan Derwin</span> · ©{" "}
+            <span className="font-bold text-primary-foreground">Alan Derwin</span> · ©{" "}
             {new Date().getFullYear()}
           </p>
         </div>

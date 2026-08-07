@@ -5,6 +5,7 @@ import ThemeProvider from "./context/theme";
 
 import AppLayout from "./layouts/app-layout";
 import RequireAuth from "./components/require-auth";
+import RequireGuest from "./components/require-guest";
 import PageLoader from "./components/PageLoader";
 
 import RedirectLink from "./pages/RedirectLink";
@@ -20,6 +21,12 @@ const AuthGuard = ({ children }) => (
   </RequireAuth>
 );
 
+const GuestGuard = ({ children }) => (
+  <RequireGuest>
+    <Suspense fallback={<PageLoader label="Loading..." />}>{children}</Suspense>
+  </RequireGuest>
+);
+
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -30,7 +37,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/auth",
-        element: <Auth />,
+        element: (
+          <GuestGuard>
+            <Auth />
+          </GuestGuard>
+        ),
       },
       {
         path: "/dashboard",

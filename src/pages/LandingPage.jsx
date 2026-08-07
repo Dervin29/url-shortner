@@ -9,7 +9,6 @@ import {
   Copy,
   LinkSimple,
   DeviceMobile,
-  QrCode,
   Scissors,
 } from "@phosphor-icons/react";
 import { UrlState } from "@/context/context";
@@ -108,7 +107,7 @@ const LandingPage = () => {
     <div>
       {/* Hero — asymmetric split */}
       <section className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
-        <div className="ambient-blob -top-32 left-1/4 -z-10 size-[32rem] bg-info-fg" />
+        <div className="ambient-blob -top-32 left-1/4 -z-10 size-[32rem] bg-brand" />
 
         <Reveal>
           <Badge variant="outline">Free forever · no credit card</Badge>
@@ -161,13 +160,25 @@ const LandingPage = () => {
 
         {/* Live product demo */}
         <Reveal delay={120}>
-          <div className="rounded-xl border border-border bg-card p-5 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
-                Your short link
-              </p>
-              <Badge variant="info">demo preview</Badge>
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
+            <div className="flex items-center gap-3 border-b border-border bg-muted/20 px-4 py-2.5 sm:px-5">
+              <span className="flex items-center gap-1.5" aria-hidden="true">
+                <span className="size-2.5 rounded-full bg-muted" />
+                <span className="size-2.5 rounded-full bg-muted" />
+                <span className="size-2.5 rounded-full bg-muted" />
+              </span>
+              <span className="ml-1 truncate font-mono text-xs text-muted-foreground">
+                {SHORT_DOMAIN}/a4f9z
+              </span>
             </div>
+
+            <div className="p-5 sm:p-6">
+              <div className="flex items-center justify-between">
+                <p className="font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+                  Your short link
+                </p>
+                <Badge variant="info">demo preview</Badge>
+              </div>
 
             <div className="mt-4 flex items-center gap-2 rounded-lg border border-border bg-background p-3.5">
               <span className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
@@ -218,6 +229,7 @@ const LandingPage = () => {
               </div>
               <MiniBars className="mt-3 h-12" />
             </div>
+            </div>
           </div>
         </Reveal>
       </section>
@@ -239,7 +251,7 @@ const LandingPage = () => {
           {/* Shorten — large tile */}
           <Reveal
             delay={0}
-            className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-1"
+            className="rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-1"
           >
             <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
               <Scissors weight="bold" className="size-6" aria-hidden="true" />
@@ -272,7 +284,7 @@ const LandingPage = () => {
               <Reveal
                 key={feature.title}
                 delay={(i + 1) * 80}
-                className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8"
+                className="rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8"
               >
                 <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
                   <Icon weight="bold" className="size-6" aria-hidden="true" />
@@ -293,12 +305,12 @@ const LandingPage = () => {
           {/* QR — wide tile */}
           <Reveal
             delay={320}
-            className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-3"
+            className="flex items-center rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-3"
           >
-            <div className="flex items-start gap-6 sm:items-center">
-              <div className="flex size-24 shrink-0 items-center justify-center rounded-lg border border-border bg-background p-2">
+            <div className="flex w-full flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+              <div className="flex size-28 shrink-0 items-center justify-center rounded-lg border border-border bg-background p-2.5">
                 <QRCode
-                  size={80}
+                  size={92}
                   value={APP_URL}
                   bgColor="#ffffff"
                   fgColor="#171717"
@@ -306,14 +318,11 @@ const LandingPage = () => {
                   includeMargin={false}
                 />
               </div>
-              <div>
-                <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
-                  <QrCode weight="bold" className="size-6" aria-hidden="true" />
-                </div>
-                <h3 className="mt-5 text-xl font-semibold tracking-[-0.01em]">
+              <div className="text-center sm:text-left">
+                <h3 className="text-xl font-semibold tracking-[-0.01em]">
                   QR codes
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground sm:mx-0">
                   Every link ships with a scannable QR — print it, ship it,
                   point a phone at it.
                 </p>
@@ -324,7 +333,7 @@ const LandingPage = () => {
           {/* Analytics — narrow tile */}
           <Reveal
             delay={400}
-            className="rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-2"
+            className="rounded-lg border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-8 md:col-span-2"
           >
             <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-muted/40">
               <ChartBar weight="bold" className="size-6" aria-hidden="true" />

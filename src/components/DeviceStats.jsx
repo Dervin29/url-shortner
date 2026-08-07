@@ -30,7 +30,7 @@ export default function DeviceStats({ stats = [] }) {
 
   if (!data.length) {
     return (
-      <div className="flex h-72 flex-col items-center justify-center gap-2 rounded-xl border border-border text-center text-muted-foreground">
+      <div className="flex h-72 flex-col items-center justify-center gap-2 rounded-lg border border-border text-center text-muted-foreground">
         <DeviceMobile weight="bold" className="size-6 opacity-60" aria-hidden="true" />
         <p className="text-sm">No device data available.</p>
       </div>
@@ -38,7 +38,7 @@ export default function DeviceStats({ stats = [] }) {
   }
 
   return (
-    <div className="h-72 rounded-xl border border-border p-4">
+    <div className="h-72 rounded-lg border border-border p-4">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

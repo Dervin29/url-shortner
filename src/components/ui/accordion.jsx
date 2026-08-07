@@ -1,7 +1,7 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 
 import { cn } from "@/lib/utils"
-import { CaretDown, CaretUp } from "@phosphor-icons/react"
+import { Plus, Minus } from "@phosphor-icons/react"
 
 function Accordion({
   className,
@@ -42,11 +42,11 @@ function AccordionTrigger({
         )}
         {...props}>
         {children}
-        <CaretDown
+        <Plus
           weight="bold"
           data-slot="accordion-trigger-icon"
           className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
-        <CaretUp
+        <Minus
           weight="bold"
           data-slot="accordion-trigger-icon"
           className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />

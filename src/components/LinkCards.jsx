@@ -76,7 +76,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
   return (
     <article
       className={cn(
-        "group flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
+        "group flex flex-wrap items-center gap-4 rounded-lg border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
         selected
           ? "border-foreground bg-muted/40"
           : "border-border hover:border-foreground/30 hover:shadow-card-hover",

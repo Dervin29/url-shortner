@@ -79,7 +79,7 @@ const Header = () => {
                   cn(
                     "rounded-[4px] border px-3 py-1.5 text-sm font-bold transition-colors",
                     isActive
-                      ? "border-foreground bg-foreground text-background shadow-button-sm"
+                      ? "border-foreground bg-muted text-foreground shadow-button-sm"
                       : "border-transparent text-muted-foreground hover:text-foreground",
                   )
                 }

@@ -91,7 +91,7 @@ const BentoMetric = ({ icon: Icon, label, value, change, trend }) => (
       )}
     </div>
     <div className="rounded-[4px] border border-foreground bg-background p-2.5 shadow-button-sm">
-      <Icon weight="bold" className="size-4.5" />
+      <Icon weight="bold" className="size-4.5 text-foreground" />
     </div>
   </div>
 );
@@ -256,7 +256,7 @@ const LinkPage = () => {
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               className="gap-2"
               onClick={() => navigate("/dashboard")}
@@ -269,7 +269,7 @@ const LinkPage = () => {
               <span className="max-w-[200px] truncate text-sm font-medium">
                 {url?.title || "Untitled Link"}
               </span>
-              <Badge variant="success">Active</Badge>
+              <Badge variant="success" className="hidden sm:block">Active</Badge>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -284,7 +284,7 @@ const LinkPage = () => {
                 weight="bold"
                 className={cn("size-3.5", loadingStats && "animate-spin")}
               />
-              Refresh
+              <span className=" hidden sm:block">Refresh</span>
             </Button>
           </div>
         </div>

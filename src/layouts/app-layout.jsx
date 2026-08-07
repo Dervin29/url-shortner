@@ -16,19 +16,7 @@ const AppLayout = () => {
         Skip to main content
       </a>
 
-      <Toaster
-        closeButton
-        position="bottom-right"
-        theme={theme}
-        toastOptions={{
-          classNames: {
-            toast:
-              "group-[.toaster]:rounded-lg group-[.toaster]:border-foreground group-[.toaster]:shadow-card group-[.toaster]:font-sans",
-            success: "group-[.toaster]:text-foreground",
-            error: "group-[.toaster]:text-foreground",
-          },
-        }}
-      />
+      <Toaster richColors closeButton position="bottom-right" theme={theme} />
 
       <Header />
 

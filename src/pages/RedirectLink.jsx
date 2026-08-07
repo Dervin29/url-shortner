@@ -156,7 +156,7 @@ const RedirectLink = () => {
 
           {/* Progress bar */}
           <div className="w-full max-w-xs">
-            <div className="h-2 w-full overflow-hidden rounded-[4px] border border-foreground bg-muted">
+            <div className="h-2 w-full overflow-hidden rounded-[4px] border border-border bg-muted">
               <div
                 className="h-full rounded-[4px] bg-secondary transition-all duration-1000 ease-linear"
                 style={{ width: `${((3 - countdown) / 3) * 100}%` }}

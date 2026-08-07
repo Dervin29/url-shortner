@@ -83,7 +83,7 @@ const BentoMetric = ({ icon: Icon, label, value, change, trend }) => (
         <p
           className={cn(
             "mt-1 text-xs font-bold",
-            trend === "up" ? "text-success" : "text-destructive"
+            trend === "up" ? "text-foreground bg-success border border-foreground shadow-card rounded-sm px-2 py-0.5  " : "text-destructive"
           )}
         >
           {change}

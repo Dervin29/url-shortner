@@ -71,7 +71,7 @@ const StatCard = ({
       <CardTitle className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-current opacity-60">
         {label}
       </CardTitle>
-      <div className="flex size-9 items-center justify-center rounded-[4px] border border-foreground/40 bg-foreground/10">
+      <div className="flex size-9 items-center justify-center rounded-[4px] border border-foreground bg-foreground/10">
         <Icon weight="bold" className="size-4" aria-hidden="true" />
       </div>
     </CardHeader>

@@ -148,7 +148,7 @@ const LandingPage = () => {
   return (
     <div>
       {/* Hero — asymmetric split */}
-      <section className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
+      <section className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-4 pb-18 sm:pb-26 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
         <Reveal>
           <div className="flex flex-wrap items-center gap-3">
             <Badge

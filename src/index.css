@@ -3,21 +3,25 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
-@import "@fontsource-variable/newsreader";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: "Newsreader Variable", "Iowan Old Style", Georgia, serif;
+  --font-display: "Geist Variable", "Helvetica Neue", ui-sans-serif, system-ui,
+    sans-serif;
   --font-heading: var(--font-display);
   --font-sans: "Geist Variable", "Helvetica Neue", ui-sans-serif, system-ui,
     sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", monospace;
 
-  /* Ultra-diffuse, near-invisible shadows. No elevation drama. */
-  --shadow-card: 0 1px 2px rgba(16, 16, 18, 0.04);
-  --shadow-card-hover: 0 2px 8px rgba(16, 16, 18, 0.04);
-  --shadow-diffuse: 0 2px 6px rgba(16, 16, 18, 0.04);
+  /* Neo-brutalist hard offset shadows. No blur, no elevation drama. */
+  --shadow-card: 4px 4px 0 0 var(--shadow-ink);
+  --shadow-card-hover: 6px 6px 0 0 var(--shadow-ink);
+  --shadow-diffuse: 2px 2px 0 0 var(--shadow-ink);
+  --shadow-button: 4px 4px 0 0 var(--shadow-ink);
+  --shadow-button-sm: 3px 3px 0 0 var(--shadow-ink);
+  --shadow-button-pressed: 1px 1px 0 0 var(--shadow-ink);
+  --shadow-input: 2px 2px 0 0 var(--shadow-ink);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -52,7 +56,7 @@
   --color-foreground: var(--foreground);
   --color-background: var(--background);
 
-  /* Semantic status — muted pastel spot color only. */
+  /* Semantic status — bold fills, black text where possible. */
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-surface: var(--success-surface);
@@ -63,12 +67,12 @@
   --color-info-surface: var(--info-surface);
   --color-info-fg: var(--info-fg);
 
-  /* Warm monochrome system — muted surface, strong border, body text. */
+  /* Warm monochrome system — paper surface, ink body. */
   --color-surface-muted: var(--surface-muted);
   --color-border-strong: var(--border-strong);
   --color-body-text: var(--body-text);
 
-  /* Optional single brand accent — kept well under 10% of the interface. */
+  /* Brand accent — hot orange, used for logo mark and hero warmth. */
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
   --color-brand-foreground: var(--brand-foreground);
@@ -83,155 +87,189 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Premium Utilitarian Minimalism — warm monochrome, ink CTA, spot      */
-/* pastels. All pairs verified against WCAG AA (>= 4.5:1 body,          */
-/* >= 3:1 non-text).                                                    */
+/* Neo-Brutalism — bold ink borders, hard offset shadows, saturated    */
+/* sticker fills. High contrast pairs.                                 */
 /* ------------------------------------------------------------------ */
 
 :root {
   color-scheme: light;
 
-  --background: #ffffff;
-  --foreground: #171717;
-  --body-text: #2f3437;
+  --background: #f2eee3;
+  --foreground: #191a1e;
+  --body-text: #191a1e;
 
   --surface: #ffffff;
-  --surface-muted: #f7f6f3;
+  --surface-muted: #eae5d8;
 
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #191a1e;
 
   --popover: #ffffff;
-  --popover-foreground: #171717;
+  --popover-foreground: #191a1e;
 
-  /* Ink CTA. White on #171717 = ~18:1. */
-  --primary: #171717;
-  --primary-foreground: #ffffff;
+  /* Electric yellow CTA. #191A1E on #FFD23F = ~15:1. */
+  --primary: #ffd23f;
+  --primary-foreground: #191a1e;
 
-  --secondary: #f7f6f3;
-  --secondary-foreground: #171717;
+  /* Cobalt blue secondary. White on #2F5BFF = ~6.6:1. */
+  --secondary: #2f5bff;
+  --secondary-foreground: #ffffff;
 
-  --muted: #f7f6f3;
-  --muted-foreground: #787774; /* 4.8:1 on #fff */
+  --muted: #eae5d8;
+  --muted-foreground: #5a574e; /* ~6:1 on paper */
 
-  --accent: #f7f6f3;
-  --accent-foreground: #171717;
+  /* Hot pink accent. Ink on #FF6B9D = ~6.3:1. */
+  --accent: #ff6b9d;
+  --accent-foreground: #191a1e;
 
-  --destructive: #b3261e; /* white on this = ~7.4:1 */
+  /* Bright red destructive. White on #FF3B30 = ~4.1:1. */
+  --destructive: #ff3b30;
   --destructive-foreground: #ffffff;
 
-  /* Success / warning surfaces. #346538 on #EDF3EC = ~7:1. */
-  --success: #346538;
-  --success-foreground: #ffffff;
-  --success-surface: #edf3ec;
+  /* Lime green success. Ink on #7BCB2F = ~10:1. */
+  --success: #7bcb2f;
+  --success-foreground: #191a1e;
+  --success-surface: #e2f6c9;
 
-  --warning: #956400;
-  --warning-foreground: #ffffff;
-  --warning-surface: #fbf3db;
+  --warning: #ffb300;
+  --warning-foreground: #191a1e;
+  --warning-surface: #fff1c4;
 
-  /* Destructive / info pale surfaces for status chips. */
-  --danger-surface: #fdebec;
-  --danger-fg: #9f2f2d; /* 5.6:1 on #FDEBEC */
-  --info-surface: #e1f3fe;
-  --info-fg: #1f6c9f; /* ~6.5:1 on #E1F3FE */
+  --danger-surface: #ffe2de;
+  --danger-fg: #b4231c;
+  --info-surface: #d9ebff;
+  --info-fg: #0b5cad;
 
-  --border: #eaeaea;
-  --border-strong: #dadada;
-  --input: #eaeaea;
-  --ring: #171717;
+  --border: #191a1e;
+  --border-strong: #191a1e;
+  --input: #191a1e;
+  --ring: #191a1e;
 
-  /* Warm terracotta brand accent — logo mark, hero warmth only. */
-  --brand: #b86b4b;
-  --brand-soft: #f7ece7;
-  --brand-foreground: #ffffff;
+  /* Hot orange brand — logo mark, hero warmth only. */
+  --brand: #ff5c33;
+  --brand-soft: #ffe3d6;
+  --brand-foreground: #191a1e;
 
-  /* Warm desaturated chart ramp (data-viz only). */
-  --chart-1: #171717;
-  --chart-2: #6b655e;
-  --chart-3: #94897f;
-  --chart-4: #b8a494;
-  --chart-5: #7d6f66;
+  /* Bold saturated chart ramp (data-viz only). */
+  --chart-1: #ff5c33;
+  --chart-2: #2f5bff;
+  --chart-3: #ffd23f;
+  --chart-4: #ff6b9d;
+  --chart-5: #7bcb2f;
 
-  --radius: 0.5rem;
+  --shadow-ink: #191a1e;
+
+  --radius: 0.25rem;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #171717;
-  --sidebar-primary: #171717;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f7f6f3;
-  --sidebar-accent-foreground: #171717;
-  --sidebar-border: #eaeaea;
-  --sidebar-ring: #171717;
+  --sidebar-foreground: #191a1e;
+  --sidebar-primary: #ffd23f;
+  --sidebar-primary-foreground: #191a1e;
+  --sidebar-accent: #eae5d8;
+  --sidebar-accent-foreground: #191a1e;
+  --sidebar-border: #191a1e;
+  --sidebar-ring: #191a1e;
 }
 
 .dark {
   color-scheme: dark;
 
-  --background: #10100f;
-  --foreground: #f5f4f0;
-  --body-text: #e2e1dc;
+  --background: #191a1e;
+  --foreground: #f5f1e6;
+  --body-text: #e7e3d6;
 
-  --surface: #1a1a18;
-  --surface-muted: #1d1d1b;
+  --surface: #24252b;
+  --surface-muted: #2c2d34;
 
-  --card: #1a1a18;
-  --card-foreground: #f5f4f0;
+  --card: #24252b;
+  --card-foreground: #f5f1e6;
 
-  --popover: #1a1a18;
-  --popover-foreground: #f5f4f0;
+  --popover: #24252b;
+  --popover-foreground: #f5f1e6;
 
-  /* Inverted ink CTA in dark mode. #10100F on #F5F4F0 = ~17:1. */
-  --primary: #f5f4f0;
-  --primary-foreground: #10100f;
+  /* Same yellow CTA in dark mode — it pops on ink. */
+  --primary: #ffd23f;
+  --primary-foreground: #191a1e;
 
-  --secondary: #242320;
-  --secondary-foreground: #f5f4f0;
+  --secondary: #3d68ff;
+  --secondary-foreground: #ffffff;
 
-  --muted: #242320;
-  --muted-foreground: #a8a69e; /* ~6.3:1 on #1a1a18 */
+  --muted: #2c2d34;
+  --muted-foreground: #a6a292; /* ~6.5:1 on card */
 
-  --accent: #242320;
-  --accent-foreground: #f5f4f0;
+  --accent: #ff6b9d;
+  --accent-foreground: #191a1e;
 
-  --destructive: #f87171; /* #1C1917 on this = ~6.2:1 */
-  --destructive-foreground: #1c1917;
+  --destructive: #ff5a4f;
+  --destructive-foreground: #191a1e;
 
-  --success: #8fce8f;
-  --success-foreground: #10100f;
-  --success-surface: rgba(52, 101, 56, 0.22);
+  --success: #9be15c;
+  --success-foreground: #191a1e;
+  --success-surface: rgba(123, 203, 47, 0.18);
 
-  --warning: #e0b054;
-  --warning-foreground: #10100f;
-  --warning-surface: rgba(149, 100, 0, 0.2);
+  --warning: #ffc24b;
+  --warning-foreground: #191a1e;
+  --warning-surface: rgba(255, 179, 0, 0.18);
 
-  --danger-surface: rgba(179, 38, 30, 0.16);
-  --danger-fg: #f79a92;
-  --info-surface: rgba(31, 108, 159, 0.2);
-  --info-fg: #8fc3e8;
+  --danger-surface: rgba(255, 59, 48, 0.18);
+  --danger-fg: #ff9e94;
+  --info-surface: rgba(47, 91, 255, 0.2);
+  --info-fg: #aec6ff;
 
-  --border: rgba(245, 244, 240, 0.1);
-  --border-strong: rgba(245, 244, 240, 0.16);
-  --input: rgba(245, 244, 240, 0.16);
-  --ring: #f5f4f0;
+  --border: #f5f1e6;
+  --border-strong: #f5f1e6;
+  --input: #f5f1e6;
+  --ring: #ffd23f;
 
-  --brand: #d08a6a;
-  --brand-soft: rgba(184, 107, 75, 0.18);
-  --brand-foreground: #10100f;
+  --brand: #ff5c33;
+  --brand-soft: rgba(255, 92, 51, 0.2);
+  --brand-foreground: #191a1e;
 
-  --chart-1: #f5f4f0;
-  --chart-2: #a8a69e;
-  --chart-3: #6e6c66;
-  --chart-4: #94897f;
-  --chart-5: #8f8278;
+  --chart-1: #ff5c33;
+  --chart-2: #3d68ff;
+  --chart-3: #ffd23f;
+  --chart-4: #ff6b9d;
+  --chart-5: #9be15c;
 
-  --sidebar: #1a1a18;
-  --sidebar-foreground: #f5f4f0;
-  --sidebar-primary: #f5f4f0;
-  --sidebar-primary-foreground: #10100f;
-  --sidebar-accent: #242320;
-  --sidebar-accent-foreground: #f5f4f0;
-  --sidebar-border: rgba(245, 244, 240, 0.1);
-  --sidebar-ring: #f5f4f0;
+  --shadow-ink: #000000;
+
+  --sidebar: #24252b;
+  --sidebar-foreground: #f5f1e6;
+  --sidebar-primary: #ffd23f;
+  --sidebar-primary-foreground: #191a1e;
+  --sidebar-accent: #2c2d34;
+  --sidebar-accent-foreground: #f5f1e6;
+  --sidebar-border: #f5f1e6;
+  --sidebar-ring: #ffd23f;
+}
+
+/* Chunk up every border to 2px — the neo-brutalist baseline. */
+@utility border {
+  border-width: 2px;
+}
+@utility border-t {
+  border-top-width: 2px;
+}
+@utility border-b {
+  border-bottom-width: 2px;
+}
+@utility border-l {
+  border-left-width: 2px;
+}
+@utility border-r {
+  border-right-width: 2px;
+}
+@utility border-x {
+  border-inline-width: 2px;
+}
+@utility border-y {
+  border-block-width: 2px;
+}
+@utility border-s {
+  border-inline-start-width: 2px;
+}
+@utility border-e {
+  border-inline-end-width: 2px;
 }
 
 @layer base {
@@ -252,7 +290,7 @@
     overflow-x: clip;
   }
   ::selection {
-    @apply bg-foreground/10;
+    @apply bg-primary text-primary-foreground;
   }
   h1,
   h2 {
@@ -263,17 +301,11 @@
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
-  /* Document fields — muted focus ring, per the Editorial system. */
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid rgba(23, 23, 23, 0.18);
+    outline: 2px solid var(--ring);
     outline-offset: 2px;
-  }
-  .dark input:focus-visible,
-  .dark textarea:focus-visible,
-  .dark select:focus-visible {
-    outline-color: rgba(245, 244, 240, 0.25);
   }
   /* Physical keystroke micro-UIs. */
   kbd {
@@ -290,11 +322,27 @@
 }
 
 /* ---------------------------------------------------------------- */
-/* Motion — transform & opacity only. Quiet, never spectacle.         */
+/* Motion — snappy, mechanical. Never spectacle without a border.    */
 /* ---------------------------------------------------------------- */
 
-/* Page transitions — 600ms, gentle rise. */
+/* Page transitions — 400ms, quick rise. */
 @keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered cascade reveals — mount lists with waterfall delays. */
+@keyframes rise-in {
   from {
     opacity: 0;
     transform: translateY(12px);
@@ -305,35 +353,19 @@
   }
 }
 
-.page-enter {
-  animation: page-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Staggered cascade reveals — mount lists with waterfall delays. */
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .stagger-item {
   opacity: 0;
-  animation: rise-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: calc(var(--i, 0) * 80ms);
 }
 
 /* IntersectionObserver scroll reveal (see components/Reveal.jsx). */
 .reveal {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(10px);
   transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
@@ -343,7 +375,7 @@
   transform: translateY(0);
 }
 
-/* Skeletal shimmer — never circular spinners for whole blocks. */
+/* Skeletal shimmer — squared blocks, brisk sweep. */
 @keyframes shimmer-sweep {
   to {
     transform: translateX(100%);
@@ -364,10 +396,10 @@
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in oklab, var(--foreground) 5%, transparent),
+    color-mix(in oklab, var(--foreground) 8%, transparent),
     transparent
   );
-  animation: shimmer-sweep 1.6s ease-in-out infinite;
+  animation: shimmer-sweep 1.4s ease-in-out infinite;
 }
 
 /* Perpetual float micro-interaction — hero artifacts only. */
@@ -389,25 +421,24 @@
   animation-delay: 1.8s;
 }
 
-/* Single ambient warm blob drifting behind hero. Fixed, non-interactive. */
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
+/* Ticker tape — infinite marquee for the hero divider. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
   }
-  50% {
-    transform: translate3d(4%, 6%, 0) scale(1.15);
+  to {
+    transform: translateX(-50%);
   }
 }
 
-.ambient-blob {
-  position: fixed;
-  pointer-events: none;
-  border-radius: 9999px;
-  filter: blur(80px);
-  opacity: 0.035;
-  animation: drift 26s ease-in-out infinite;
-  will-change: transform;
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 24s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -422,8 +453,8 @@
     opacity: 1;
     transform: none;
   }
-  .ambient-blob {
-    display: none;
+  .marquee-track {
+    animation: none;
   }
   *,
   ::before,

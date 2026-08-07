@@ -152,9 +152,9 @@ const Signup = () => {
   const apiError = error?.message || errors.api;
 
   return (
-    <Card className="w-full border-border/70">
+    <Card className="w-full">
       <CardHeader className="space-y-2 text-center">
-        <CardTitle className="text-2xl font-bold">
+        <CardTitle className="text-2xl font-black tracking-[-0.02em]">
           Create your account
         </CardTitle>
         <CardDescription>
@@ -276,7 +276,7 @@ const Signup = () => {
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <label
                     htmlFor="profile_pic"
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-[4px] border border-foreground bg-primary px-2.5 py-1.5 text-xs font-bold text-primary-foreground shadow-button-sm transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-button-pressed"
                   >
                     <Camera weight="bold" className="size-3.5" aria-hidden="true" />
                     {previewUrl ? "Change photo" : "Upload"}
@@ -338,7 +338,7 @@ const Signup = () => {
                   `/auth?tab=login${longLink ? `&createNew=${encodeURIComponent(longLink)}` : ""}`,
                 )
               }
-              className="font-medium text-primary underline-offset-4 hover:underline"
+              className="font-bold text-secondary underline-offset-4 hover:underline"
             >
               Sign in
             </button>

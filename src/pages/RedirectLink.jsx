@@ -99,7 +99,7 @@ const RedirectLink = () => {
               <WarningCircle weight="bold" className="size-8 text-destructive" aria-hidden="true" />
             </div>
             <div className="space-y-1.5">
-              <h1 className="font-display text-2xl font-medium text-destructive">
+              <h1 className="font-display text-2xl font-black text-destructive">
                 Link Not Found
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -142,7 +142,7 @@ const RedirectLink = () => {
           </div>
 
           <div className="space-y-2 text-center">
-            <h1 className="font-display text-2xl font-medium tracking-[-0.02em]">
+            <h1 className="font-display text-2xl font-black tracking-[-0.02em]">
               {isReady ? "Redirecting..." : "Loading..."}
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -156,9 +156,9 @@ const RedirectLink = () => {
 
           {/* Progress bar */}
           <div className="w-full max-w-xs">
-            <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-2 w-full overflow-hidden rounded-[4px] border border-foreground bg-muted">
               <div
-                className="h-full rounded-full bg-primary transition-all duration-1000 ease-linear"
+                className="h-full rounded-[4px] bg-secondary transition-all duration-1000 ease-linear"
                 style={{ width: `${((3 - countdown) / 3) * 100}%` }}
               />
             </div>
@@ -174,7 +174,7 @@ const RedirectLink = () => {
                 href={safeUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 break-all text-sm font-medium text-primary hover:underline"
+                className="flex items-center gap-2 break-all text-sm font-bold text-secondary hover:underline"
               >
                 <span className="truncate">{safeUrl}</span>
                 <ArrowSquareOut weight="bold" className="size-4 shrink-0" aria-hidden="true" />
@@ -189,7 +189,7 @@ const RedirectLink = () => {
                 href={safeUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="font-medium text-primary hover:underline"
+                className="font-bold text-secondary hover:underline"
               >
                 click here
               </a>

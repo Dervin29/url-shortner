@@ -11,16 +11,16 @@ const EmptyState = ({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed border-border px-6 py-14 text-center",
+        "flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-foreground bg-card/40 px-6 py-14 text-center",
         className,
       )}
     >
       {Icon && (
-        <div className="mb-4 flex size-14 items-center justify-center rounded-lg border border-border bg-muted/40">
-          <Icon weight="bold" className="size-7 text-muted-foreground" aria-hidden="true" />
+        <div className="mb-4 flex size-14 items-center justify-center rounded-[4px] border border-foreground bg-background shadow-button-sm">
+          <Icon weight="bold" className="size-7 text-foreground" aria-hidden="true" />
         </div>
       )}
-      <h3 className="font-sans text-base font-semibold">{title}</h3>
+      <h3 className="font-sans text-base font-bold">{title}</h3>
       {description && (
         <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-muted-foreground">
           {description}

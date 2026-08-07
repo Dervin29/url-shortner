@@ -61,8 +61,8 @@ import EditLink from "@/components/EditLink";
 const BentoCard = ({ children, className, variant = "default" }) => (
   <Card
     className={cn(
-      "transition-all hover:shadow-card-hover",
-      variant === "primary" && "border-foreground/20 bg-muted/30",
+      "transition-all hover:-translate-y-0.5 hover:shadow-card-hover",
+      variant === "primary" && "bg-primary text-primary-foreground",
       className
     )}
   >
@@ -73,16 +73,16 @@ const BentoCard = ({ children, className, variant = "default" }) => (
 const BentoMetric = ({ icon: Icon, label, value, change, trend }) => (
   <div className="flex items-start justify-between">
     <div>
-      <p className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+      <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-current opacity-60">
         {label}
       </p>
-      <p className="mt-1.5 font-mono text-2xl font-semibold tracking-tight">
+      <p className="mt-1.5 font-mono text-2xl font-bold tracking-tight">
         {value}
       </p>
       {change && (
         <p
           className={cn(
-            "mt-1 text-xs font-medium",
+            "mt-1 text-xs font-bold",
             trend === "up" ? "text-success" : "text-destructive"
           )}
         >
@@ -90,7 +90,7 @@ const BentoMetric = ({ icon: Icon, label, value, change, trend }) => (
         </p>
       )}
     </div>
-    <div className="rounded-md border border-border bg-muted/40 p-2.5">
+    <div className="rounded-[4px] border border-foreground bg-background p-2.5 shadow-button-sm">
       <Icon weight="bold" className="size-4.5" />
     </div>
   </div>
@@ -343,7 +343,7 @@ const LinkPage = () => {
           {/* Link Details - Large Card */}
           <BentoCard className="md:col-span-2 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-base font-semibold">
+              <CardTitle className="font-sans text-base font-bold">
                 Link Details
               </CardTitle>
             </CardHeader>
@@ -466,7 +466,7 @@ const LinkPage = () => {
           {/* QR Code Card */}
           <BentoCard className="md:col-span-2 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-base font-semibold">
+              <CardTitle className="font-sans text-base font-bold">
                 QR Code
               </CardTitle>
             </CardHeader>
@@ -494,7 +494,7 @@ const LinkPage = () => {
           {/* Chart - Full Width */}
           <BentoCard className="md:col-span-2 lg:col-span-4">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-base font-semibold">
+              <CardTitle className="font-sans text-base font-bold">
                 Clicks Over Time
               </CardTitle>
             </CardHeader>
@@ -596,7 +596,7 @@ const LinkPage = () => {
           {/* Location & Devices - Side by Side */}
           <BentoCard className="md:col-span-1 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-base font-semibold">
+              <CardTitle className="font-sans text-base font-bold">
                 <div className="flex items-center gap-2">
                   <Globe weight="bold" className="size-4" />
                   Location
@@ -616,7 +616,7 @@ const LinkPage = () => {
 
           <BentoCard className="md:col-span-1 lg:col-span-2">
             <CardHeader className="pb-2">
-              <CardTitle className="font-sans text-base font-semibold">
+              <CardTitle className="font-sans text-base font-bold">
                 <div className="flex items-center gap-2">
                   <DeviceMobile weight="bold" className="size-4" />
                   Devices

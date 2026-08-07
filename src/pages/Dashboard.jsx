@@ -74,7 +74,7 @@ const StatCard = ({ icon: Icon, label, value, loading, hint }) => (
 );
 
 const LinkCardSkeleton = () => (
-  <div className="flex items-center gap-4 rounded-xl border border-border p-4 sm:p-5">
+  <div className="flex items-center gap-4 rounded-lg border border-border p-4 sm:p-5">
     <Skeleton className="size-5 shrink-0 rounded" />
     <Skeleton className="hidden size-20 shrink-0 rounded-lg sm:block sm:size-24" />
     <div className="flex-1 space-y-2.5">
@@ -258,7 +258,7 @@ const Dashboard = () => {
           </div>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center gap-4 rounded-xl border border-destructive/30 bg-danger-surface px-6 py-12 text-center">
+        <div className="flex flex-col items-center gap-4 rounded-lg border border-destructive/30 bg-danger-surface px-6 py-12 text-center">
           <Error message={error.message || "Failed to load your links"} />
           <Button variant="outline" onClick={() => fnUrls()}>
             Try again
@@ -349,7 +349,7 @@ const Dashboard = () => {
 
           {/* Bulk Actions Toolbar */}
           {selectedIds.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-muted/40 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
               <label className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="checkbox"

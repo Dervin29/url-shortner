@@ -63,7 +63,7 @@ const Header = () => {
             className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
             aria-label="Trimrr home"
           >
-            <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <span className="flex size-8 items-center justify-center rounded-md bg-brand-soft text-brand">
               <Scissors weight="bold" className="size-4" aria-hidden="true" />
             </span>
             <span className="text-lg font-semibold tracking-[-0.02em]">

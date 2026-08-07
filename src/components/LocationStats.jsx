@@ -23,7 +23,7 @@ export default function LocationStats({ stats = [] }) {
 
   if (!data.length) {
     return (
-      <div className="flex h-72 flex-col items-center justify-center gap-2 rounded-xl border border-border text-center text-muted-foreground">
+      <div className="flex h-72 flex-col items-center justify-center gap-2 rounded-lg border border-border text-center text-muted-foreground">
         <MapPin weight="bold" className="size-6 opacity-60" aria-hidden="true" />
         <p className="text-sm">No location data available.</p>
       </div>
@@ -31,7 +31,7 @@ export default function LocationStats({ stats = [] }) {
   }
 
   return (
-    <div className="h-72 rounded-xl border border-border p-4">
+    <div className="h-72 rounded-lg border border-border p-4">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />

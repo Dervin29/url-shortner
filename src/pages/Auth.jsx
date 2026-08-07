@@ -20,7 +20,7 @@ const Auth = () => {
     <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center px-4 py-6 sm:py-8">
       <div className="w-full max-w-md">
         <div className="mb-5 flex flex-col items-center text-center">
-          <div className="mb-2.5 flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <div className="mb-2.5 flex size-11 items-center justify-center rounded-md bg-brand-soft text-brand">
             <Scissors weight="bold" className="size-5" aria-hidden="true" />
           </div>
           <h1 className="font-display text-2xl font-medium tracking-[-0.02em] sm:text-3xl">

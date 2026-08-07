@@ -2,7 +2,7 @@
 
 A modern URL shortening application built with React, Vite, Supabase, and ShadCN UI. Trimrr turns long URLs into short, powerful links with real-time analytics, custom aliases, and QR codes.
 
-**Live Demo:** https://url-shortner-xi-ten.vercel.app
+**Live Demo:** https://trimrr-links.vercel.app/
 
 ---
 

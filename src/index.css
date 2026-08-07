@@ -174,41 +174,43 @@
 .dark {
   color-scheme: dark;
 
-  --background: #191a1e;
-  --foreground: #f5f1e6;
-  --body-text: #e7e3d6;
+  /* Warm dark ink. Surfaces step up from the canvas so cards read before
+     borders even arrive. */
+  --background: #16171a;
+  --foreground: #f2ecdd;
+  --body-text: #e7e2d3;
 
-  --surface: #24252b;
-  --surface-muted: #2c2d34;
+  --surface: #1f2026;
+  --surface-muted: #282a31;
 
-  --card: #24252b;
-  --card-foreground: #f5f1e6;
+  --card: #1f2026;
+  --card-foreground: #f2ecdd;
 
-  --popover: #24252b;
-  --popover-foreground: #f5f1e6;
+  --popover: #1f2026;
+  --popover-foreground: #f2ecdd;
 
   /* Same yellow CTA in dark mode — it pops on ink. */
   --primary: #ffd23f;
-  --primary-foreground: #191a1e;
+  --primary-foreground: #1a1b1f;
 
   --secondary: #3d68ff;
   --secondary-foreground: #ffffff;
 
-  --muted: #2c2d34;
-  --muted-foreground: #a6a292; /* ~6.5:1 on card */
+  --muted: #282a31;
+  --muted-foreground: #a6a292; /* ~8:1 on card */
 
   --accent: #ff6b9d;
-  --accent-foreground: #191a1e;
+  --accent-foreground: #1a1b1f;
 
   --destructive: #ff5a4f;
-  --destructive-foreground: #191a1e;
+  --destructive-foreground: #1a1b1f;
 
   --success: #9be15c;
-  --success-foreground: #191a1e;
+  --success-foreground: #1a1b1f;
   --success-surface: rgba(123, 203, 47, 0.18);
 
   --warning: #ffc24b;
-  --warning-foreground: #191a1e;
+  --warning-foreground: #1a1b1f;
   --warning-surface: rgba(255, 179, 0, 0.18);
 
   --danger-surface: rgba(255, 59, 48, 0.18);
@@ -216,14 +218,15 @@
   --info-surface: rgba(47, 91, 255, 0.2);
   --info-fg: #aec6ff;
 
-  --border: #f5f1e6;
-  --border-strong: #f5f1e6;
-  --input: #f5f1e6;
+  /* Structural borders drop out of "ink" — muted so cards don't glow white. */
+  --border: #3e4048;
+  --border-strong: #63656e;
+  --input: #3e4048;
   --ring: #ffd23f;
 
   --brand: #ff5c33;
   --brand-soft: rgba(255, 92, 51, 0.2);
-  --brand-foreground: #191a1e;
+  --brand-foreground: #1a1b1f;
 
   --chart-1: #ff5c33;
   --chart-2: #3d68ff;
@@ -231,15 +234,16 @@
   --chart-4: #ff6b9d;
   --chart-5: #9be15c;
 
-  --shadow-ink: #000000;
+  /* Hard offset shadows stay visible against dark ink. */
+  --shadow-ink: #2a2b31;
 
-  --sidebar: #24252b;
-  --sidebar-foreground: #f5f1e6;
+  --sidebar: #1f2026;
+  --sidebar-foreground: #f2ecdd;
   --sidebar-primary: #ffd23f;
-  --sidebar-primary-foreground: #191a1e;
-  --sidebar-accent: #2c2d34;
-  --sidebar-accent-foreground: #f5f1e6;
-  --sidebar-border: #f5f1e6;
+  --sidebar-primary-foreground: #1a1b1f;
+  --sidebar-accent: #282a31;
+  --sidebar-accent-foreground: #f2ecdd;
+  --sidebar-border: #3e4048;
   --sidebar-ring: #ffd23f;
 }
 
@@ -373,6 +377,83 @@
 .reveal-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ------------------------------------------------------------------ */
+/* Toasts (sonner) — neo-brutalist stickers, hard borders, ink text.   */
+/* ------------------------------------------------------------------ */
+
+[data-sonner-toaster][data-sonner-theme='light'],
+[data-sonner-toaster][data-sonner-theme='dark'] {
+  --normal-bg: var(--background) !important;
+  --normal-border: var(--foreground) !important;
+  --normal-text: var(--foreground) !important;
+
+  --success-bg: var(--success) !important;
+  --success-border: var(--foreground) !important;
+  --success-text: var(--foreground) !important;
+
+  --error-bg: var(--danger) !important;
+  --error-border: var(--foreground) !important;
+  --error-text: var(--foreground) !important;
+
+  --warning-bg: var(--warning) !important;
+  --warning-border: var(--foreground) !important;
+  --warning-text: var(--foreground) !important;
+
+  --info-bg: var(--info) !important;
+  --info-border: var(--foreground) !important;
+  --info-text: var(--foreground) !important;
+}
+
+/* Shell — thick ink border, hard offset shadow, squared corners. */
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] {
+  border: 2px solid var(--foreground);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 0 var(--shadow-ink);
+  font-family: var(--font-sans);
+}
+
+/* Title — bold ink. Description — muted ink. */
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-title] {
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-description] {
+  font-weight: 500;
+  color: var(--muted-foreground) !important;
+}
+
+/* Icon — a bordered sticker instead of a bare glyph. */
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-icon] {
+  width: 28px;
+  height: 28px;
+  margin-left: 0;
+  margin-right: 12px;
+  justify-content: center;
+  border: 2px solid var(--foreground);
+  border-radius: 4px;
+  background: var(--card);
+  box-shadow: 2px 2px 0 0 var(--shadow-ink);
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-icon] svg {
+  margin: 0;
+}
+
+/* Close button — hard square, not a soft circle. */
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-close-button] {
+  background: var(--card);
+  border: 2px solid var(--foreground);
+  border-radius: 4px;
+  color: var(--foreground);
+}
+
+[data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-close-button]:hover {
+  background: var(--muted) !important;
+  border-color: var(--foreground) !important;
+  color: var(--foreground) !important;
 }
 
 /* Skeletal shimmer — squared blocks, brisk sweep. */

@@ -366,7 +366,7 @@ const Dashboard = () => {
 
           {/* Bulk Actions Toolbar */}
           {selectedIds.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-foreground bg-muted/40 px-3 py-2 shadow-button-sm">
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2 shadow-button-sm">
               <label className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="checkbox"

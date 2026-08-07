@@ -72,10 +72,18 @@ const Login = () => {
   };
 
   const handleBlur = async (e) => {
-    const { name } = e.target;
+    const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
+    const normalized = name === "email" ? value.trim() : value;
+    if (normalized !== value) {
+      setFormData((prev) => ({ ...prev, [name]: normalized }));
+    }
     try {
-      await schema.validateAt(name, formData);
+      await schema.validateAt(
+        name,
+        { ...formData, [name]: normalized },
+        { abortEarly: false, strict: true },
+      );
       setErrors((prev) => {
         const next = { ...prev };
         delete next[name];
@@ -88,7 +96,7 @@ const Login = () => {
 
   const validate = async () => {
     try {
-      await schema.validate(formData, { abortEarly: false });
+      await schema.validate(formData, { abortEarly: false, strict: true });
       return null;
     } catch (err) {
       const validationErrors = {};

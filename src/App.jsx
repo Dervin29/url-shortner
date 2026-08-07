@@ -5,6 +5,7 @@ import ThemeProvider from "./context/theme";
 
 import AppLayout from "./layouts/app-layout";
 import RequireAuth from "./components/require-auth";
+import RedirectAuthenticated from "./components/redirect-authenticated";
 import PageLoader from "./components/PageLoader";
 
 import RedirectLink from "./pages/RedirectLink";
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/auth",
-        element: <Auth />,
+        element: (
+          <RedirectAuthenticated>
+            <Auth />
+          </RedirectAuthenticated>
+        ),
       },
       {
         path: "/dashboard",

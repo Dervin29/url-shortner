@@ -23,7 +23,7 @@ const AppLayout = () => {
         toastOptions={{
           classNames: {
             toast:
-              "group-[.toaster]:rounded-lg group-[.toaster]:border-border group-[.toaster]:shadow-card group-[.toaster]:font-sans",
+              "group-[.toaster]:rounded-lg group-[.toaster]:border-foreground group-[.toaster]:shadow-card group-[.toaster]:font-sans",
             success: "group-[.toaster]:text-foreground",
             error: "group-[.toaster]:text-foreground",
           },
@@ -43,15 +43,15 @@ const AppLayout = () => {
         </div>
       </main>
 
-      <footer className="border-t border-border bg-muted/30">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
-          <p className="font-mono text-xs uppercase tracking-[0.08em]">
-            Trimrr · Shorten. Share. Measure.
+      <footer className="border-t bg-foreground">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-sm text-background/70 sm:flex-row sm:px-6 lg:px-8">
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-background">
+            <span className="text-primary">Trimrr</span> · Shorten. Share. Measure.
           </p>
-          <p className="font-mono text-xs text-muted-foreground">
+          <p className="font-mono text-xs text-background/60">
             Built by{" "}
-            <span className="font-semibold text-foreground">Alan Derwin</span>{" "}
-            · © {new Date().getFullYear()}
+            <span className="font-bold text-background">Alan Derwin</span> · ©{" "}
+            {new Date().getFullYear()}
           </p>
         </div>
       </footer>

@@ -50,13 +50,28 @@ const SORT_OPTIONS = [
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 
-const StatCard = ({ icon: Icon, label, value, loading, hint }) => (
-  <Card className="transition-all hover:shadow-card-hover">
+const STAT_TONES = {
+  default: "bg-card text-card-foreground",
+  yellow: "bg-primary text-primary-foreground",
+  blue: "bg-secondary text-secondary-foreground",
+  pink: "bg-accent text-accent-foreground",
+  green: "bg-success text-success-foreground",
+};
+
+const StatCard = ({
+  icon: Icon,
+  label,
+  value,
+  loading,
+  hint,
+  tone = "default",
+}) => (
+  <Card className={`transition-all hover:-translate-y-0.5 hover:shadow-card-hover ${STAT_TONES[tone]}`}>
     <CardHeader className="flex flex-row items-center justify-between pb-2">
-      <CardTitle className="font-mono text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+      <CardTitle className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-current opacity-60">
         {label}
       </CardTitle>
-      <div className="flex size-9 items-center justify-center rounded-md border border-border bg-muted/40">
+      <div className="flex size-9 items-center justify-center rounded-[4px] border border-foreground/40 bg-foreground/10">
         <Icon weight="bold" className="size-4" aria-hidden="true" />
       </div>
     </CardHeader>
@@ -64,11 +79,11 @@ const StatCard = ({ icon: Icon, label, value, loading, hint }) => (
       {loading ? (
         <Skeleton className="h-8 w-24" />
       ) : (
-        <p className="font-mono text-3xl font-semibold tracking-tight">
+        <p className="font-mono text-3xl font-bold tracking-tight">
           {value}
         </p>
       )}
-      <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
+      <p className="mt-1 text-xs font-medium text-current opacity-60">{hint}</p>
     </CardContent>
   </Card>
 );
@@ -234,10 +249,10 @@ const Dashboard = () => {
       {/* Page header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <h1 className="font-display text-3xl font-medium tracking-[-0.02em] sm:text-4xl">
+          <h1 className="font-display text-3xl font-black tracking-[-0.03em] sm:text-4xl">
             Your Links
           </h1>
-          <p className="mt-2 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="mt-2 font-mono text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
             Manage and track all your shortened URLs
           </p>
         </div>
@@ -258,7 +273,7 @@ const Dashboard = () => {
           </div>
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center gap-4 rounded-lg border border-destructive/30 bg-danger-surface px-6 py-12 text-center">
+        <div className="flex flex-col items-center gap-4 rounded-lg border-2 border-destructive/40 bg-danger-surface px-6 py-12 text-center">
           <Error message={error.message || "Failed to load your links"} />
           <Button variant="outline" onClick={() => fnUrls()}>
             Try again
@@ -273,6 +288,7 @@ const Dashboard = () => {
               label="Total Links"
               value={(urls?.length || 0).toLocaleString()}
               loading={loading}
+              tone="yellow"
               hint={
                 urls?.length === 0
                   ? "No links yet"
@@ -284,6 +300,7 @@ const Dashboard = () => {
               label="Total Clicks"
               value={totalClicks.toLocaleString()}
               loading={loadingClicks}
+              tone="blue"
               hint={
                 totalClicks === 0
                   ? "No clicks yet"
@@ -349,7 +366,7 @@ const Dashboard = () => {
 
           {/* Bulk Actions Toolbar */}
           {selectedIds.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-foreground bg-muted/40 px-3 py-2 shadow-button-sm">
               <label className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="checkbox"

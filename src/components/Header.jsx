@@ -55,18 +55,18 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <header className="sticky top-0 z-40 border-b bg-background">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 sm:gap-5">
           <Link
             to="/"
-            className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
+            className="group flex items-center gap-2.5 transition-transform hover:-translate-y-0.5"
             aria-label="Trimrr home"
           >
-            <span className="flex size-8 items-center justify-center rounded-md bg-brand-soft text-brand">
+            <span className="flex size-9 items-center justify-center rounded-[4px] border border-foreground bg-primary text-primary-foreground shadow-button-sm transition-all group-hover:translate-x-[1px] group-hover:translate-y-[1px] group-hover:shadow-button-pressed">
               <Scissors weight="bold" className="size-4" aria-hidden="true" />
             </span>
-            <span className="text-lg font-semibold tracking-[-0.02em]">
+            <span className="text-lg font-extrabold uppercase tracking-tight">
               Trimrr
             </span>
           </Link>
@@ -77,10 +77,10 @@ const Header = () => {
                 to="/dashboard"
                 className={({ isActive }) =>
                   cn(
-                    "relative rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                    "rounded-[4px] border px-3 py-1.5 text-sm font-bold transition-colors",
                     isActive
-                      ? "text-foreground after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-foreground"
-                      : "text-muted-foreground hover:text-foreground",
+                      ? "border-foreground bg-foreground text-background shadow-button-sm"
+                      : "border-transparent text-muted-foreground hover:text-foreground",
                   )
                 }
               >

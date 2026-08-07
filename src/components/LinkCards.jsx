@@ -76,10 +76,10 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
   return (
     <article
       className={cn(
-        "group flex flex-wrap items-center gap-4 rounded-lg border bg-card p-4 transition-all duration-200 sm:gap-5 sm:p-5",
+        "group flex flex-wrap items-center gap-4 rounded-lg border border-foreground bg-card p-4 shadow-card transition-all duration-200 sm:gap-5 sm:p-5",
         selected
-          ? "border-foreground bg-muted/40"
-          : "border-border hover:border-foreground/30 hover:shadow-card-hover",
+          ? "-translate-x-[2px] -translate-y-[2px] bg-muted shadow-button-pressed"
+          : "hover:-translate-y-0.5 hover:shadow-card-hover",
       )}
     >
       {/* Selection checkbox */}
@@ -89,7 +89,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           checked={selected || false}
           onChange={() => onToggle?.(url?.id)}
           aria-label={`Select ${url?.title || "link"}`}
-          className="size-4 cursor-pointer rounded border-muted-foreground/40 bg-background text-primary accent-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="size-4 cursor-pointer rounded border-foreground/40 bg-background text-secondary accent-secondary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 
@@ -102,7 +102,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
         <img
           src={url?.qr}
           alt={`QR code for ${url?.title || "link"}`}
-          className="size-20 rounded-lg border border-border bg-white p-1.5 transition-transform duration-200 group-hover:scale-105 sm:size-24"
+          className="size-20 rounded-[4px] border border-foreground bg-white p-1.5 transition-transform duration-200 group-hover:-rotate-2 sm:size-24"
           loading="lazy"
         />
       </Link>
@@ -114,7 +114,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
           className="group/link block"
           aria-label={`View stats for ${url?.title || "link"}`}
         >
-          <h2 className="truncate text-base font-semibold tracking-[-0.01em] transition-colors group-hover/link:text-foreground sm:text-lg">
+          <h2 className="truncate text-base font-bold tracking-[-0.01em] sm:text-lg">
             {url?.title || "Untitled Link"}
           </h2>
         </Link>
@@ -124,7 +124,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
             href={shortUrl}
             target="_blank"
             rel="noreferrer"
-            className="min-w-0 truncate font-mono text-sm text-primary hover:underline"
+            className="min-w-0 truncate font-mono text-sm font-semibold text-secondary hover:underline"
             title={shortUrl}
           >
             {shortUrl}

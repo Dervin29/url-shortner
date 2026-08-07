@@ -10,7 +10,7 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-lg border border-border bg-card py-(--card-spacing) text-sm text-card-foreground [--card-spacing:--spacing(5)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-lg border border-foreground bg-card py-(--card-spacing) text-sm text-card-foreground shadow-card [--card-spacing:--spacing(5)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
         className
       )}
       {...props} />
@@ -40,7 +40,7 @@ function CardTitle({
     <div
       data-slot="card-title"
       className={cn(
-        "font-sans text-base leading-snug font-semibold tracking-[-0.01em] group-data-[size=sm]/card:text-sm",
+        "font-sans text-base leading-snug font-bold tracking-[-0.01em] group-data-[size=sm]/card:text-sm",
         className
       )}
       {...props} />

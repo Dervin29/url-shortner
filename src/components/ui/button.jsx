@@ -5,27 +5,27 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-[4px] border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[background-color,color,border-color,transform,box-shadow] duration-200 ease-out outline-none select-none active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20 disabled:active:scale-100 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/15 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/30 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-[4px] border text-sm font-bold whitespace-nowrap transition-[background-color,color,border-color,transform,box-shadow] duration-150 ease-out outline-none select-none active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 disabled:active:scale-100 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/15 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/30 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-[color-mix(in_oklab,var(--primary),#ffffff_8%)] dark:hover:bg-[color-mix(in_oklab,var(--primary),#0a0a0a_8%)]",
+          "border-foreground bg-primary text-primary-foreground shadow-button hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-button-pressed active:translate-x-[3px] active:translate-y-[3px] active:shadow-none",
         outline:
-          "border-input bg-background text-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-muted/60",
+          "border-foreground bg-background text-foreground shadow-button hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-button-pressed hover:bg-muted/40 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklab,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "border-foreground bg-secondary text-secondary-foreground shadow-button hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-button-pressed active:translate-x-[3px] active:translate-y-[3px] active:shadow-none",
         ghost:
-          "text-foreground hover:bg-muted aria-expanded:bg-muted dark:hover:bg-muted/60",
+          "border-transparent bg-transparent text-foreground hover:bg-muted aria-expanded:bg-muted dark:hover:bg-muted/60",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-[color-mix(in_oklab,var(--destructive),var(--destructive-foreground)_10%)] focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border-foreground bg-destructive text-destructive-foreground shadow-button hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-button-pressed active:translate-x-[3px] active:translate-y-[3px] active:shadow-none",
+        link: "border-transparent bg-transparent text-foreground underline underline-offset-4 hover:text-secondary",
       },
       size: {
         default: "h-9 gap-2 px-4",
         xs: "h-6 gap-1 rounded-sm px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 px-3 text-[0.8125rem] [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-11 gap-2 px-5 text-[0.9375rem]",
+        lg: "h-12 gap-2 px-6 text-base",
         icon: "size-9",
         "icon-xs": "size-6 rounded-sm [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8 [&_svg:not([class*='size-'])]:size-4",

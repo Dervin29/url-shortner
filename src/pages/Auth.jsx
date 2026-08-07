@@ -20,10 +20,10 @@ const Auth = () => {
     <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center px-4 py-6 sm:py-8">
       <div className="w-full max-w-md">
         <div className="mb-5 flex flex-col items-center text-center">
-          <div className="mb-2.5 flex size-11 items-center justify-center rounded-md bg-brand-soft text-brand">
+          <div className="mb-3 flex size-12 items-center justify-center rounded-[4px] border border-foreground bg-primary text-primary-foreground shadow-button-sm">
             <Scissors weight="bold" className="size-5" aria-hidden="true" />
           </div>
-          <h1 className="font-display text-2xl font-medium tracking-[-0.02em] sm:text-3xl">
+          <h1 className="font-display text-2xl font-black tracking-[-0.02em] sm:text-3xl">
             {tab === "signup" ? "Create your account" : "Welcome back"}
           </h1>
           <p className="mt-1 font-mono text-xs uppercase tracking-[0.08em] text-muted-foreground">
@@ -34,13 +34,13 @@ const Auth = () => {
         </div>
 
         {longLink && (
-          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-border bg-muted/40 p-3 text-sm">
+          <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-foreground bg-accent p-3 text-sm shadow-button-sm">
             <LinkSimple
               weight="bold"
-              className="mt-0.5 size-4 shrink-0 text-foreground"
+              className="mt-0.5 size-4 shrink-0 text-accent-foreground"
               aria-hidden="true"
             />
-            <p className="text-muted-foreground">
+            <p className="font-medium text-accent-foreground">
               You're one step away from saving your link.{" "}
               {tab === "signup" ? "Create an account" : "Sign in"}{" "}
               to continue right where you left off.

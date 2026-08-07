@@ -117,10 +117,14 @@ const Login = () => {
   const apiError = error?.message || errors.api;
 
   return (
-    <Card className="w-full border-border/70">
+    <Card className="w-full">
       <CardHeader className="space-y-2 text-center">
-        <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-        <CardDescription>Sign in to continue to your account.</CardDescription>
+        <CardTitle className="text-2xl font-black tracking-[-0.02em]">
+          Welcome back
+        </CardTitle>
+        <CardDescription>
+          Sign in to continue to your account.
+        </CardDescription>
       </CardHeader>
 
       {apiError && (
@@ -199,7 +203,7 @@ const Login = () => {
                   `/auth?tab=signup${longLink ? `&createNew=${encodeURIComponent(longLink)}` : ""}`,
                 )
               }
-              className="font-medium text-primary underline-offset-4 hover:underline"
+              className="font-bold text-secondary underline-offset-4 hover:underline"
             >
               Create one
             </button>

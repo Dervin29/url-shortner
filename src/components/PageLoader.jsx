@@ -11,7 +11,7 @@ const PageLoader = ({ label = "Loading...", className }) => {
         className,
       )}
     >
-      <span className="flex size-11 items-center justify-center rounded-md bg-brand-soft text-brand">
+      <span className="flex size-12 items-center justify-center rounded-[4px] border border-foreground bg-primary text-primary-foreground shadow-button-sm">
         <Scissors weight="bold" className="size-5" aria-hidden="true" />
       </span>
       <div className="w-full space-y-4">

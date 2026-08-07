@@ -198,7 +198,7 @@ const LandingPage = () => {
                 </Button>
                 <Button
                   size="lg"
-                  variant="ghost"
+                  variant="outline"
                   onClick={() => navigate("/auth?tab=login")}
                 >
                   Sign in

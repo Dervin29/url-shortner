@@ -241,6 +241,7 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground;
@@ -248,6 +249,7 @@
     text-rendering: optimizeLegibility;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     line-height: 1.6;
+    overflow-x: clip;
   }
   ::selection {
     @apply bg-foreground/10;

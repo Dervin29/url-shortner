@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, QrCode, Sparkle } from "@phosphor-icons/react";
+import { Plus, QrCode } from "@phosphor-icons/react";
 import { QRCode } from "react-qrcode-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -116,10 +116,12 @@ export function CreateLink({ fetchUrls }) {
         fetchUrls?.();
       }
     } catch (err) {
-      // API errors surface through the `error` state and are rendered inline
       console.error(err);
     }
   };
+
+  // Get the base URL without trailing slash
+  const baseUrl = import.meta.env.VITE_APP_URL.replace(/\/+$/, "");
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
@@ -135,7 +137,6 @@ export function CreateLink({ fetchUrls }) {
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkle weight="bold" className="size-5 text-muted-foreground" aria-hidden="true" />
             Create New Link
           </DialogTitle>
           <DialogDescription>
@@ -211,29 +212,23 @@ export function CreateLink({ fetchUrls }) {
                   (optional)
                 </span>
               </Label>
-              <div className="flex items-stretch gap-2">
-                <div className="flex shrink-0 items-center rounded-lg border bg-muted px-3 font-mono text-sm text-muted-foreground">
-                  {import.meta.env.VITE_APP_URL}/
-                </div>
-                <Input
-                  id="create-customUrl"
-                  name="customUrl"
-                  placeholder="my-custom-link"
-                  value={formValues.customUrl}
-                  onChange={handleChange}
-                  onClick={(e) => e.target.select()}
-                  disabled={loading}
-                  aria-invalid={errors.customUrl ? true : undefined}
-                  aria-describedby={
-                    errors.customUrl ? "create-customUrl-error" : undefined
-                  }
-                />
-              </div>
+              <Input
+                id="create-customUrl"
+                name="customUrl"
+                placeholder="my-custom-link"
+                value={formValues.customUrl}
+                onChange={handleChange}
+                onClick={(e) => e.target.select()}
+                disabled={loading}
+                aria-invalid={errors.customUrl ? true : undefined}
+                aria-describedby={
+                  errors.customUrl ? "create-customUrl-error" : undefined
+                }
+              />
               <Error id="create-customUrl-error" message={errors.customUrl} />
-              {!errors.customUrl && formValues.customUrl && (
+              {formValues.customUrl && (
                 <p className="break-all text-xs text-muted-foreground">
-                  Your link will be: {import.meta.env.VITE_APP_URL}/
-                  {formValues.customUrl}
+                  Your link: {baseUrl}/{formValues.customUrl}
                 </p>
               )}
             </div>

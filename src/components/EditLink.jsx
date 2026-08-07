@@ -70,6 +70,8 @@ const EditLinkForm = ({ url, loading, error, onSave, onCancel }) => {
     }
   };
 
+  const baseUrl = import.meta.env.VITE_APP_URL.replace(/\/+$/, "");
+
   return (
     <form onSubmit={handleSubmit} noValidate>
       {error && (
@@ -123,29 +125,23 @@ const EditLinkForm = ({ url, loading, error, onSave, onCancel }) => {
               (optional)
             </span>
           </Label>
-          <div className="flex items-stretch gap-2">
-            <div className="flex shrink-0 items-center rounded-lg border bg-muted px-3 font-mono text-sm text-muted-foreground">
-              {import.meta.env.VITE_APP_URL}/
-            </div>
-            <Input
-              id="edit-customUrl"
-              name="customUrl"
-              placeholder="my-custom-link"
-              value={formValues.customUrl}
-              onChange={handleChange}
-              onClick={(e) => e.target.select()}
-              disabled={loading}
-              aria-invalid={errors.customUrl ? true : undefined}
-              aria-describedby={
-                errors.customUrl ? "edit-customUrl-error" : undefined
-              }
-            />
-          </div>
+          <Input
+            id="edit-customUrl"
+            name="customUrl"
+            placeholder="my-custom-link"
+            value={formValues.customUrl}
+            onChange={handleChange}
+            onClick={(e) => e.target.select()}
+            disabled={loading}
+            aria-invalid={errors.customUrl ? true : undefined}
+            aria-describedby={
+              errors.customUrl ? "edit-customUrl-error" : undefined
+            }
+          />
           <Error id="edit-customUrl-error" message={errors.customUrl} />
-          {!errors.customUrl && formValues.customUrl && (
+          {formValues.customUrl && (
             <p className="break-all text-xs text-muted-foreground">
-              Your link will be: {import.meta.env.VITE_APP_URL}/
-              {formValues.customUrl}
+              Your link: {baseUrl}/{formValues.customUrl}
             </p>
           )}
         </div>

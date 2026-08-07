@@ -107,7 +107,7 @@ const LandingPage = () => {
     <div>
       {/* Hero — asymmetric split */}
       <section className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
-        <div className="ambient-blob -top-32 left-1/4 -z-10 size-[32rem] bg-brand" />
+        <div className="ambient-blob -top-32 left-1/4 -z-10 hidden size-[32rem] bg-brand sm:block" />
 
         <Reveal>
           <Badge variant="outline">Free forever · no credit card</Badge>

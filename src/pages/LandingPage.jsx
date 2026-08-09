@@ -133,8 +133,8 @@ const FEATURES = [
     visual: (
       <div className="mt-8">
         <div className="flex flex-wrap items-center gap-1.5 rounded-[4px] border border-foreground bg-background p-3 font-mono text-sm shadow-input">
-          <span className="text-muted-foreground">{SHORT_DOMAIN}/</span>
-          <span className="font-bold text-foreground">my-brand</span>
+          <span className="min-w-0 break-all text-muted-foreground">{SHORT_DOMAIN}/</span>
+          <span className="shrink-0 font-bold text-foreground">my-brand</span>
         </div>
       </div>
     ),
@@ -358,10 +358,10 @@ const LandingPage = () => {
               <p className="mt-2 flex items-center gap-2 font-bold text-foreground">
                 <ArrowRight
                   weight="bold"
-                  className="size-3.5 text-muted-foreground"
+                  className="size-3.5 shrink-0 text-muted-foreground"
                   aria-hidden="true"
                 />
-                <span className="text-secondary">{SHORT_DOMAIN}/a4f9z</span>
+                <span className="min-w-0 truncate text-secondary">{SHORT_DOMAIN}/a4f9z</span>
               </p>
             </div>
           </Reveal>
@@ -478,8 +478,9 @@ const LandingPage = () => {
                 </div>
                 <Button
                   size="lg"
-                  className="bg-foreground text-background hover:bg-foreground"
+                  variant="outline"
                   onClick={() => navigate("/auth?tab=signup")}
+                  className="hover:bg-background"
                 >
                   Create Your Free Account
                   <ArrowRight weight="bold" className="size-4" aria-hidden="true" />

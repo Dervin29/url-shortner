@@ -20,6 +20,18 @@ Trimrr turns long URLs into short, trackable links with click analytics, custom 
 * Copy and open short links directly
 * Dark and light themes
 
+## Screenshots
+
+<p align="center">
+  <img src="./public/screenshots/create-link.png" width="49%" />
+  <img src="./public/screenshots/dashboard.png" width="49%" />
+</p>
+
+<p align="center">
+  <img src="./public/screenshots/link-details.png" width="49%" />
+  <img src="./public/screenshots/link-stats.png" width="49%" />
+</p>
+
 ## Tech Stack
 
 | Category               | Technologies                        |

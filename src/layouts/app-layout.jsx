@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import Header from "@/components/Header";
+import OfflineBanner from "@/components/OfflineBanner";
 import { useTheme } from "@/context/theme";
 
 const AppLayout = () => {
@@ -17,6 +18,8 @@ const AppLayout = () => {
       </a>
 
       <Toaster richColors closeButton position="bottom-right" theme={theme} />
+
+      <OfflineBanner />
 
       <Header />
 

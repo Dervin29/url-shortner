@@ -19,6 +19,7 @@ Trimrr turns long URLs into short, trackable links with click analytics, custom 
 * Edit and delete links
 * Copy and open short links directly
 * Dark and light themes
+* Installable PWA with offline app-shell caching and a connectivity banner
 
 ## Tech Stack
 
@@ -136,6 +137,7 @@ View Analytics
 ## Known Limitations
 
 * Rate limiting is currently client-side and is not a security boundary
+* Offline support caches the app shell only — live data still requires a connection
 * Click analytics are client-reported
 * Location data depends on the external `ipapi.co` service
 * Short-code uniqueness is not explicitly checked

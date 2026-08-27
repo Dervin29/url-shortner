@@ -102,7 +102,7 @@ export async function resetPassword({ email }) {
   checkAuthRate(resetLimiters, "reset", email);
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${import.meta.env.VITE_APP_URL}/auth?tab=login`,
+    redirectTo: `${import.meta.env.VITE_APP_URL.replace(/\/+$/, "")}/auth?tab=login`,
   });
 
   if (error) throw new Error(error.message);

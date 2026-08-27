@@ -62,7 +62,7 @@ const LinkCards = ({ url, fetchUrls, selected, onToggle, clickCount = 0 }) => {
     }
   };
 
-  const shortUrl = `${import.meta.env.VITE_APP_URL}/${
+  const shortUrl = `${import.meta.env.VITE_APP_URL.replace(/\/+$/, "")}/${
     url?.custom_url || url?.short_url
   }`;
   const createdDate = url?.created_at

@@ -236,7 +236,7 @@ const LinkPage = () => {
     );
   }
 
-  const shortUrl = `${import.meta.env.VITE_APP_URL}/${
+  const shortUrl = `${import.meta.env.VITE_APP_URL.replace(/\/+$/, "")}/${
     url?.custom_url || url?.short_url
   }`;
 
